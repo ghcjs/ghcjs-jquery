@@ -155,7 +155,7 @@ mkListener :: (JSObject (MVar Event) -> JQuery -> IO JQuery)
            -> (Event -> IO ()) -> JQuery -> IO JQuery
 mkListener f a jq = do
   mv <- newEmptyMVar
-  forkIO (forever $ readMVar mv >>= a)
+  forkIO (forever $ takeMVar mv >>= a)
   f (mvarRef mv) jq
 
 click :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
