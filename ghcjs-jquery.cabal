@@ -11,11 +11,13 @@ maintainer:          stegeman@gmail.com
 category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
+extra-source-files: JavaScript/JQuery/nonghcjs.txt
 
 library
   exposed-modules:   JavaScript.JQuery
                      JavaScript.JQuery.Internal
   build-depends:     base ==4.7.*,
+                     data-default,
                      ghcjs-base,
                      text
 
