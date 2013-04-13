@@ -189,7 +189,7 @@ hover' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
 hover' a = on' a "hover"
 
 mousedown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
-mousedown a = on a "mousdown"
+mousedown a = on a "mousedown"
 
 mousedown' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
 mousedown' a = on' a "mousedown"

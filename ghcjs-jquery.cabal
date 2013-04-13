@@ -14,6 +14,7 @@ cabal-version:       >=1.10
 extra-source-files: JavaScript/JQuery/nonghcjs.txt
 
 library
+  ghcjs-options: -O2
   exposed-modules:   JavaScript.JQuery
                      JavaScript.JQuery.Internal
   build-depends:     base ==4.7.*,
