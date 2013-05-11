@@ -118,6 +118,10 @@ foreign import javascript unsafe "$2.siblings($1)"                    jq_sibling
 foreign import javascript unsafe "$2.slice($1)"                       jq_slice             :: Int                  -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.slice($1,$2)"                    jq_sliceFromTo       :: Int -> Int           -> JQuery -> IO JQuery
 
+foreign import javascript safe "jQuery.ajax($1,$2).always(function(d,ts,xhr) { if(typeof(d) === 'string') { $c({ data: d, status: xhr.statusCode() }); } else { $c({ data: null, status: d.statusCode() }); } });"
+  jq_ajax :: JSString
+          -> JSRef ajaxSettings
+          -> IO (JSRef ajaxResult)
 
 foreign import javascript unsafe "$8.on($2, $3, $4, h$makeMVarListener($1, $5, $6, $7))"
   jq_on :: JSObject (MVar Event)
@@ -142,6 +146,8 @@ foreign import javascript unsafe "$8.one($2, $3, $4, h$makeMVarListener($1, $5, 
          -> IO JQuery
 
 #else
+jq_ajax                          = error "jq_ajax: only available in JavaScript"
+
 jq_on                            = error "jq_on: only available in JavaScript"
 jq_one                           = error "jq_one: only available in JavaScript"
 

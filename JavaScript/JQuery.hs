@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, OverloadedStrings #-}
+{-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, OverloadedStrings, DeriveGeneric, DeriveDataTypeable #-}
 
 {-
   JQuery bindings, loosely based on fay-jquery
@@ -6,8 +6,10 @@
 
 module JavaScript.JQuery where
 
+import           GHCJS.Marshal
 import           GHCJS.Foreign
 import           GHCJS.Types
+import qualified GHCJS.Foreign as F
 
 import           JavaScript.JQuery.Internal
 
@@ -19,9 +21,55 @@ import           Control.Monad
 import           Data.Default
 import           Data.Maybe
 import           Data.Text (Text)
+import           Data.Typeable
 
 type EventType = Text
 type Selector  = Text
+
+data Method = GET | POST | PUT | DELETE deriving (Eq, Ord, Enum, Show)
+
+data AjaxSettings = AjaxSettings { asContentType :: Text
+                                 , asCache       :: Bool
+                                 , asIfModified  :: Bool
+                                 , asMethod      :: Method
+                                 } deriving (Ord, Eq, Show, Typeable)
+
+data AjaxResult = AjaxResult { arStatus :: Int
+                             , arData   :: Maybe Text
+                             } deriving (Ord, Eq, Show, Typeable)
+
+instance Default AjaxSettings where
+  def = AjaxSettings "application/x-www-form-urlencoded; charset=UTF-8" True False GET
+
+instance ToJSRef AjaxSettings where
+  toJSRef (AjaxSettings ct cache ifMod method) = do
+    o <- newObj
+    let (.=) :: Text -> JSRef a -> IO ()
+        p .= v = F.setProp p v o
+    "method"      .= toJSString method
+    "ifModified"  .= toJSBool ifMod
+    "cache"       .= toJSBool cache
+    "contentType" .= toJSString ct
+    "dataType"    .= ("text" :: JSString)
+    return o
+
+instance ToJSString Method where
+  toJSString GET    = "GET"
+  toJSString POST   = "POST"
+  toJSString PUT    = "PUT"
+  toJSString DELETE = "DELETE"
+
+ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
+ajax url d s = do
+  o <- newObj
+  forM_ d (\(k,v) -> F.setProp k (toJSString v) o)
+  os <- toJSRef s
+  F.setProp ("data"::Text) o os
+  arr <- jq_ajax (toJSString url) os
+  dat <- F.getProp ("data"::Text) arr
+  let d = if isNull dat then Nothing else Just (fromJSString dat)
+  status <- fromMaybe 0 <$> (fromJSRef =<< F.getProp ("status"::Text) arr)
+  return (AjaxResult status d)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopPropagation          :: Bool
@@ -664,26 +712,4 @@ slice = jq_slice
 sliceFromTo :: Int -> Int -> JQuery -> IO JQuery
 sliceFromTo = jq_sliceFromTo
 
-{-
-data KeyCode = KeyUp
-             | KeyDown
-             | KeyLeft
-             | KeyRight
-             | KeyRet
-             | SomeKey Double
-  deriving (Show)
-
-onKeycode :: (KeyCode -> Fay Bool) -> JQuery -> Fay JQuery
-onKeycode callback el = do
-  _onKeycode (\code -> callback (case code of
-                                   38 -> KeyUp
-                                   40 -> KeyDown
-                                   37 -> KeyLeft
-                                   39 -> KeyRight
-                                   13 -> KeyRet
-                                   _  -> SomeKey code))
-
-_onKeycode :: (Double -> Fay Bool) -> JQuery -> Fay JQuery
-_onKeycode = ffi "%2['keycode'](%1)"
--}
 
