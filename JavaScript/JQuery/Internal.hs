@@ -4,7 +4,6 @@ module JavaScript.JQuery.Internal where
 
 import GHCJS.Types
 import GHCJS.Foreign
-import GHCJS.Types.Internal
 
 import Control.Concurrent.MVar
 
