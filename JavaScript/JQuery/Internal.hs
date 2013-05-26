@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, CPP, EmptyDataDecls #-}
+{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, CPP, EmptyDataDecls #-}
 
 module JavaScript.JQuery.Internal where
 
