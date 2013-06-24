@@ -4,16 +4,199 @@
   JQuery bindings, loosely based on fay-jquery
 -}
 
-module JavaScript.JQuery where
+module JavaScript.JQuery ( JQuery(..)
+                         , Element(..)
+                         , Event(..)
+                         , EventType
+                         , Selector
+                         , Method
+                         , AjaxSettings(..)
+                         , AjaxResult(..)
+                         , ajax
+                         , HandlerSettings(..)
+                         , addClass
+                         , getAttr
+                         , setAttr
+                         , hasClass
+                         , getHtml
+                         , setHtml
+                         , getProp
+                         , setProp
+                         , removeAttr
+                         , removeClass
+                         , removeProp
+                         , getVal
+                         , setVal
+                         , getText
+                         , setText
+                         , holdReady
+                         , selectElement
+                         , selectObject
+                         , select
+                         , selectEmpty
+                         , selectWithContext
+                         , getCss
+                         , setCss
+                         , getHeight
+                         , setHeight
+                         , getWidth
+                         , setWidth
+                         , getInnerHeight
+                         , getOuterHeight
+                         , getInnerWidth
+                         , getOuterWidth
+                         , getScrollLeft
+                         , setScrollLeft
+                         , getScrollTop
+                         , setScrollTop
+                         , click, click'
+                         , dblclick, dblclick'
+                         , focusin, focusin'
+                         , focusout, focusout'
+                         , hover, hover'
+                         , mousedown, mousedown'
+                         , mouseenter, mouseenter'
+                         , mouseleave, mouseleave'
+                         , mousemove, mousemove'
+                         , mouseup, mouseup'
+                         , on, on'
+                         , one, one'
+                         , triggerHandler
+                         , delegateTarget
+                         , isDefaultPrevented
+                         , isImmediatePropagationStopped
+                         , isPropagationStopped
+                         , namespace
+                         , pageX
+                         , pageY
+                         , preventDefault
+                         , stopPropagation
+                         , stopImmediatePropagation
+                         , target
+                         , timeStamp
+                         , eventType
+                         , which
+                         , blur, blur'
+                         , change, change'
+                         , onFocus, onFocus'
+                         , focus
+                         , onSelect, select'
+                         , keydown, keydown'
+                         , keyup, keyup'
+                         , keypress, keypress'
+                         , after
+                         , afterJQuery
+                         , afterElem
+                         , append
+                         , appendJQuery
+                         , appendElem
+                         , appendTo
+                         , appendToJQuery
+                         , appendToElem
+                         , before
+                         , beforeJQuery
+                         , beforeElem
+                         , CloneType(..)
+                         , clone
+                         , detach
+                         , detachSelector
+                         , empty
+                         , insertAfter
+                         , insertAfterJQuery
+                         , insertAfterElem
+                         , insertBefore
+                         , insertBeforeJQuery
+                         , insertBeforeElem
+                         , prepend
+                         , prependJQuery
+                         , prependElem
+                         , prependTo
+                         , prependToJQuery
+                         , prependToElem
+                         , remove
+                         , removeSelector
+                         , replaceAll
+                         , replaceAllJQuery
+                         , replaceAllElem
+                         , replaceWith
+                         , replaceWithJQuery
+                         , replaceWithElem
+                         , unwrap
+                         , wrap
+                         , wrapJQuery
+                         , wrapElem
+                         , wrapAll
+                         , wrapAllJQuery
+                         , wrapAllElem
+                         , wrapInner
+                         , wrapInnerJQuery
+                         , wrapInnerElem
+                         , addSelector
+                         , addElement
+                         , addHtml
+                         , add
+                         , andSelf
+                         , children
+                         , childrenMatching
+                         , closestSelector
+                         , closest
+                         , closestElement
+                         , contents
+                         , end
+                         , eq
+                         , filter
+                         , filterElement
+                         , filterJQuery
+                         , find
+                         , findJQuery
+                         , findElement
+                         , first
+                         , has
+                         , hasElement
+                         , is
+                         , isJQuery
+                         , isElement
+                         , last
+                         , next
+                         , nextSelector
+                         , nextAll
+                         , nextAllSelector
+                         , nextUntil
+                         , nextUntilElement
+                         , not
+                         , notElement
+                         , notJQuery
+                         , offsetParent
+                         , parent
+                         , parentSelector
+                         , parents
+                         , parentsSelector
+                         , parentsUntil
+                         , parentsUntilElement
+                         , prev
+                         , prevSelector
+                         , prevAll
+                         , prevAllSelector
+                         , prevUntil
+                         , prevUntilElement
+                         , siblings
+                         , siblingsSelector
+                         , slice
+                         , sliceFromTo
+                         ) where
+
+import           Prelude hiding (filter, not, empty, last)
 
 import           GHCJS.Marshal
-import           GHCJS.Foreign
+import           GHCJS.Foreign ( ToJSString(..), FromJSString(..), newObj, fromJSBool
+                               , toJSBool, jsNull, jsFalse, jsTrue, mvarRef
+                               )
 import           GHCJS.Types
 import qualified GHCJS.Foreign as F
 
 import           JavaScript.JQuery.Internal
 
-import           Control.Applicative
+import           Control.Applicative hiding (empty)
 import           Control.Concurrent
 import           Control.Concurrent.MVar
 import           Control.Monad
