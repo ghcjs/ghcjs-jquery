@@ -119,9 +119,9 @@ foreign import javascript unsafe "$1.slice($1,$2)"                    jq_sliceFr
 
 foreign import javascript safe "jQuery.ajax($1,$2).always(function(d,ts,xhr) {\
                                   if(typeof(d) === 'string') {\
-                                    $c({ data: d, status: xhr.statusCode() });\
+                                    $c({ data: d, status: xhr.status });\
                                   } else {\
-                                    $c({ data: null, status: d.statusCode() });\
+                                    $c({ data: null, status: d.status });\
                                   }\
                                 });"
   jq_ajax :: JSString
