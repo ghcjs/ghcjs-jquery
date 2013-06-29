@@ -3,16 +3,15 @@
 module JavaScript.JQuery.Internal where
 
 import GHCJS.Types
+import GHCJS.DOM.Types (Element(..))
 import GHCJS.Foreign
 
 import Control.Concurrent.MVar
 
 data JQuery_
-data Element_
 data Event_
 
 type JQuery = JSRef JQuery_
-type Element = JSRef Element_
 type Event = JSRef Event_
 
 #ifdef __GHCJS__
@@ -32,7 +31,7 @@ foreign import javascript unsafe "$2.val($1)"            jq_setVal            ::
 foreign import javascript unsafe "$1.text()"             jq_getText           ::                         JQuery -> IO JSString
 foreign import javascript unsafe "$2.text($1)"           jq_setText           :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "jQuery.holdReady($1)"  jq_holdReady         :: JSBool                         -> IO ()
-foreign import javascript unsafe "jQuery($1)"            jq_selectElement     :: Element                        -> IO JQuery
+foreign import javascript unsafe "jQuery($1)"            jq_selectElement     :: JSRef Element                  -> IO JQuery
 foreign import javascript unsafe "jQuery($1)"            jq_selectObject      :: JSRef ()                       -> IO JQuery
 foreign import javascript unsafe "jQuery($1)"            jq_select            :: JSString                       -> IO JQuery
 foreign import javascript unsafe "jQuery()"              jq_selectEmpty       ::                                   IO JQuery
@@ -55,7 +54,7 @@ foreign import javascript unsafe "$1.scrollTop()"        jq_getScrollTop      ::
 foreign import javascript unsafe "$2.scrollTop($1)"      jq_setScrollTop      :: Double               -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.focus()"            jq_focus             ::                         JQuery -> IO JQuery
 
-foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO Element
+foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO (JSRef Element)
 foreign import javascript unsafe "$1.isDefaultPrevented()"            jq_isDefaultPrevented            :: Event -> IO JSBool
 foreign import javascript unsafe "$1.isImmediatePropagationStopped()" jq_isImmediatePropagationStopped :: Event -> IO JSBool
 foreign import javascript unsafe "$1.isPropagationStopped()"          jq_isPropagationStopped          :: Event -> IO JSBool
@@ -65,7 +64,7 @@ foreign import javascript unsafe "$1.pageY"                           jq_pageY  
 foreign import javascript unsafe "$1.preventDefault()"                jq_preventDefault                :: Event -> IO ()
 foreign import javascript unsafe "$1.stopPropagation()"               jq_stopPropagation               :: Event -> IO ()
 foreign import javascript unsafe "$1.stopImmediatePropagation()"      jq_stopImmediatePropagation      :: Event -> IO ()
-foreign import javascript unsafe "$1.target"                          jq_target                        :: Event -> IO Element
+foreign import javascript unsafe "$1.target"                          jq_target                        :: Event -> IO (JSRef Element)
 foreign import javascript unsafe "$1.timeStamp"                       jq_timeStamp                     :: Event -> IO Double
 foreign import javascript unsafe "$1.type"                            jq_eventType                     :: Event -> IO JSString
 foreign import javascript unsafe "$1.which"                           jq_eventWhich                    :: Event -> IO Int -- fixme might not exist?

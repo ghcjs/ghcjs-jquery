@@ -30,7 +30,7 @@ jq_setText :: JSString -> JQuery -> IO JQuery
 jq_setText = error "jq_setText: only available in JavaScript"
 jq_holdReady :: JSBool -> IO ()
 jq_holdReady = error "jq_holdReady: only available in JavaScript"
-jq_selectElement :: Element -> IO JQuery
+jq_selectElement :: JSRef Element -> IO JQuery
 jq_selectElement = error "jq_selectElement: only available in JavaScript"
 jq_selectObject :: JSRef () -> IO JQuery
 jq_selectObject = error "jq_selectObject: only available in JavaScript"
@@ -74,7 +74,7 @@ jq_setScrollTop :: Double -> JQuery -> IO JQuery
 jq_setScrollTop = error "jq_setScrollTop: only available in JavaScript"
 jq_focus :: JQuery -> IO JQuery
 jq_focus = error "jq_focus: only available in JavaScript"
-jq_delegateTarget :: Event -> IO Element
+jq_delegateTarget :: Event -> IO (JSRef Element)
 jq_delegateTarget = error "jq_delegateTarget: only available in JavaScript"
 jq_isDefaultPrevented :: Event -> IO JSBool
 jq_isDefaultPrevented = error "jq_isDefaultPrevented: only available in JavaScript"
@@ -94,7 +94,7 @@ jq_stopPropagation :: Event -> IO ()
 jq_stopPropagation = error "jq_stopPropagation: only available in JavaScript"
 jq_stopImmediatePropagation :: Event -> IO ()
 jq_stopImmediatePropagation = error "jq_stopImmediatePropagation: only available in JavaScript"
-jq_target :: Event -> IO Element
+jq_target :: Event -> IO (JSRef Element)
 jq_target = error "jq_target: only available in JavaScript"
 jq_timeStamp :: Event -> IO Double
 jq_timeStamp = error "jq_timeStamp: only available in JavaScript"
