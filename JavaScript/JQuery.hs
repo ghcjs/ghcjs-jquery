@@ -191,7 +191,7 @@ import           GHCJS.Foreign ( ToJSString(..), FromJSString(..), newObj, fromJ
                                , toJSBool, jsNull, jsFalse, jsTrue, mvarRef
                                )
 import           GHCJS.Types
-import           GHCJS.DOM.Types (Element(..), ElementClass(..), toElement
+import           GHCJS.DOM.Types (Element(..), IsElement(..), toElement
                                  , unElement)
 import qualified GHCJS.Foreign as F
 
@@ -321,7 +321,7 @@ setText t = jq_setText (toJSString t)
 holdReady :: Bool -> IO ()
 holdReady b = jq_holdReady (toJSBool b)
 
-selectElement :: ElementClass e => e -> IO JQuery
+selectElement :: IsElement e => e -> IO JQuery
 selectElement e = jq_selectElement (unElement (toElement e))
 
 selectObject :: JSObject a -> IO JQuery
@@ -589,7 +589,7 @@ after h jq = jq_after (castRef $ toJSString h) jq
 afterJQuery :: JQuery -> JQuery -> IO JQuery
 afterJQuery j jq = jq_after (castRef j) jq
 
-afterElem :: ElementClass e => e -> JQuery -> IO JQuery
+afterElem :: IsElement e => e -> JQuery -> IO JQuery
 afterElem e jq = jq_after (castRef . unElement $ toElement e) jq
 
 append :: Text -> JQuery -> IO JQuery
@@ -598,7 +598,7 @@ append h jq = jq_append (castRef $ toJSString h) jq
 appendJQuery :: JQuery -> JQuery -> IO JQuery
 appendJQuery j jq = jq_append (castRef j) jq
 
-appendElem :: ElementClass e => e -> JQuery -> IO JQuery
+appendElem :: IsElement e => e -> JQuery -> IO JQuery
 appendElem e jq = jq_append (castRef . unElement $ toElement e) jq
 
 appendTo :: Text -> JQuery -> IO JQuery
@@ -607,7 +607,7 @@ appendTo h jq = jq_appendTo (castRef $ toJSString h) jq
 appendToJQuery :: JQuery -> JQuery -> IO JQuery
 appendToJQuery j jq = jq_appendTo (castRef j) jq
 
-appendToElem :: ElementClass e => e -> JQuery -> IO JQuery
+appendToElem :: IsElement e => e -> JQuery -> IO JQuery
 appendToElem e jq = jq_appendTo (castRef . unElement $ toElement e) jq
 
 before :: Text -> JQuery -> IO JQuery
@@ -616,7 +616,7 @@ before h jq = jq_before (castRef $ toJSString h) jq
 beforeJQuery :: JQuery -> JQuery -> IO JQuery
 beforeJQuery j jq = jq_before (castRef j) jq
 
-beforeElem :: ElementClass e => e -> JQuery -> IO JQuery
+beforeElem :: IsElement e => e -> JQuery -> IO JQuery
 beforeElem e jq = jq_before (castRef . unElement $ toElement e) jq
 
 data CloneType = WithoutDataAndEvents
@@ -643,7 +643,7 @@ insertAfter h jq = jq_insertAfter (castRef $ toJSString h) jq
 insertAfterJQuery :: JQuery -> JQuery -> IO JQuery
 insertAfterJQuery j jq = jq_insertAfter (castRef j) jq
 
-insertAfterElem :: ElementClass e => e -> JQuery -> IO JQuery
+insertAfterElem :: IsElement e => e -> JQuery -> IO JQuery
 insertAfterElem e jq = jq_insertAfter (castRef . unElement $ toElement e) jq
 
 insertBefore :: Text -> JQuery -> IO JQuery
@@ -652,7 +652,7 @@ insertBefore h jq = jq_insertBefore (castRef $ toJSString h) jq
 insertBeforeJQuery :: JQuery -> JQuery -> IO JQuery
 insertBeforeJQuery j jq = jq_insertBefore (castRef j) jq
 
-insertBeforeElem :: ElementClass e => e -> JQuery -> IO JQuery
+insertBeforeElem :: IsElement e => e -> JQuery -> IO JQuery
 insertBeforeElem e jq = jq_insertBefore (castRef . unElement $ toElement e) jq
 
 prepend :: Text -> JQuery -> IO JQuery
@@ -661,7 +661,7 @@ prepend h jq = jq_prepend (castRef $ toJSString h) jq
 prependJQuery :: JQuery -> JQuery -> IO JQuery
 prependJQuery j jq = jq_prepend (castRef j) jq
 
-prependElem :: ElementClass e => e -> JQuery -> IO JQuery
+prependElem :: IsElement e => e -> JQuery -> IO JQuery
 prependElem e jq = jq_prepend (castRef . unElement $ toElement e) jq
 
 prependTo :: Text -> JQuery -> IO JQuery
@@ -670,7 +670,7 @@ prependTo h jq = jq_prependTo (castRef $ toJSString h) jq
 prependToJQuery :: JQuery -> JQuery -> IO JQuery
 prependToJQuery j jq = jq_prependTo (castRef j) jq
 
-prependToElem :: ElementClass e => e -> JQuery -> IO JQuery
+prependToElem :: IsElement e => e -> JQuery -> IO JQuery
 prependToElem e jq = jq_prependTo (castRef . unElement $ toElement e) jq
 
 remove :: JQuery -> IO JQuery
@@ -685,7 +685,7 @@ replaceAll h jq = jq_replaceAll (castRef $ toJSString h) jq
 replaceAllJQuery :: JQuery -> JQuery -> IO JQuery
 replaceAllJQuery j jq = jq_replaceAll (castRef j) jq
 
-replaceAllElem :: ElementClass e => e -> JQuery -> IO JQuery
+replaceAllElem :: IsElement e => e -> JQuery -> IO JQuery
 replaceAllElem e jq = jq_replaceAll (castRef . unElement $ toElement e) jq
 
 replaceWith :: Text -> JQuery -> IO JQuery
@@ -694,7 +694,7 @@ replaceWith h jq = jq_replaceWith (castRef $ toJSString h) jq
 replaceWithJQuery :: JQuery -> JQuery -> IO JQuery
 replaceWithJQuery j jq = jq_replaceWith (castRef j) jq
 
-replaceWithElem :: ElementClass e => e -> JQuery -> IO JQuery
+replaceWithElem :: IsElement e => e -> JQuery -> IO JQuery
 replaceWithElem e jq = jq_replaceWith (castRef . unElement $ toElement e) jq
 
 unwrap :: JQuery -> IO JQuery
@@ -706,7 +706,7 @@ wrap h jq = jq_wrap (castRef $ toJSString h) jq
 wrapJQuery :: JQuery -> JQuery -> IO JQuery
 wrapJQuery j jq = jq_wrap (castRef j) jq
 
-wrapElem :: ElementClass e => e -> JQuery -> IO JQuery
+wrapElem :: IsElement e => e -> JQuery -> IO JQuery
 wrapElem e jq = jq_wrap (castRef . unElement $ toElement e) jq
 
 wrapAll :: Text -> JQuery -> IO JQuery
@@ -715,7 +715,7 @@ wrapAll h jq = jq_wrapAll (castRef $ toJSString h) jq
 wrapAllJQuery :: JQuery -> JQuery -> IO JQuery
 wrapAllJQuery j jq = jq_wrapAll (castRef j) jq
 
-wrapAllElem :: ElementClass e => e -> JQuery -> IO JQuery
+wrapAllElem :: IsElement e => e -> JQuery -> IO JQuery
 wrapAllElem e jq = jq_wrapAll (castRef . unElement $ toElement e) jq
 
 wrapInner :: Text -> JQuery -> IO JQuery
@@ -724,13 +724,13 @@ wrapInner h jq = jq_wrapInner (castRef $ toJSString h) jq
 wrapInnerJQuery :: JQuery -> JQuery -> IO JQuery
 wrapInnerJQuery j jq = jq_wrapInner (castRef j) jq
 
-wrapInnerElem :: ElementClass e => e -> JQuery -> IO JQuery
+wrapInnerElem :: IsElement e => e -> JQuery -> IO JQuery
 wrapInnerElem e jq = jq_wrapInner (castRef . unElement $ toElement e) jq
 
 addSelector :: Selector -> JQuery -> IO JQuery
 addSelector s jq = jq_add (castRef $ toJSString s) jq
 
-addElement :: ElementClass e => e -> JQuery -> IO JQuery
+addElement :: IsElement e => e -> JQuery -> IO JQuery
 addElement e jq = jq_add (castRef . unElement $ toElement e) jq
 
 addHtml :: Text -> JQuery -> IO JQuery
@@ -760,7 +760,7 @@ closestSelector s jq = jq_closest (castRef $ toJSString s) jq
 closest :: JQuery -> JQuery -> IO JQuery
 closest j jq = jq_closest (castRef j) jq
 
-closestElement :: ElementClass e => e -> JQuery -> IO JQuery
+closestElement :: IsElement e => e -> JQuery -> IO JQuery
 closestElement e jq = jq_closest (castRef . unElement $ toElement e) jq
 
 contents :: JQuery -> IO JQuery
@@ -779,7 +779,7 @@ eq = jq_eq
 filter :: Selector -> JQuery -> IO JQuery
 filter s = jq_filter (castRef $ toJSString s)
 
-filterElement :: ElementClass e => e -> JQuery -> IO JQuery
+filterElement :: IsElement e => e -> JQuery -> IO JQuery
 filterElement e = jq_filter (castRef . unElement $ toElement e)
 
 filterJQuery :: JQuery -> JQuery -> IO JQuery
@@ -791,7 +791,7 @@ find s = jq_find (castRef $ toJSString s)
 findJQuery :: JQuery -> JQuery -> IO JQuery
 findJQuery j = jq_find (castRef j)
 
-findElement :: ElementClass e => e -> JQuery -> IO JQuery
+findElement :: IsElement e => e -> JQuery -> IO JQuery
 findElement e = jq_find (castRef . unElement $ toElement e)
 
 first :: JQuery -> IO JQuery
@@ -800,7 +800,7 @@ first = jq_first
 has :: Selector -> JQuery -> IO JQuery
 has s = jq_has (castRef $ toJSString s)
 
-hasElement :: ElementClass e => e -> JQuery -> IO JQuery
+hasElement :: IsElement e => e -> JQuery -> IO JQuery
 hasElement e = jq_has (castRef . unElement $ toElement e)
 
 is :: Selector -> JQuery -> IO JQuery
@@ -809,7 +809,7 @@ is s = jq_is (castRef $ toJSString s)
 isJQuery :: JQuery -> JQuery -> IO JQuery
 isJQuery j = jq_is (castRef j)
 
-isElement :: ElementClass e => e -> JQuery -> IO JQuery
+isElement :: IsElement e => e -> JQuery -> IO JQuery
 isElement e = jq_is (castRef . unElement $ toElement e)
 
 last :: JQuery -> IO JQuery
@@ -830,13 +830,13 @@ nextAllSelector s = jq_nextAll (toJSString s)
 nextUntil :: Selector -> Maybe Selector -> JQuery -> IO JQuery
 nextUntil s mf = jq_nextUntil (castRef $ toJSString s) (maybe jsNull toJSString mf)
 
-nextUntilElement :: ElementClass e => e -> Maybe Selector -> JQuery -> IO JQuery
+nextUntilElement :: IsElement e => e -> Maybe Selector -> JQuery -> IO JQuery
 nextUntilElement e mf = jq_nextUntil (castRef . unElement $ toElement e) (maybe jsNull toJSString mf)
 
 not :: Selector -> JQuery -> IO JQuery
 not s = jq_not (castRef $ toJSString s)
 
-notElement :: ElementClass e => e -> JQuery -> IO JQuery
+notElement :: IsElement e => e -> JQuery -> IO JQuery
 notElement e = jq_not (castRef . unElement $ toElement e)
 
 -- notElements :: [Element] -> JQuery -> IO JQuery
@@ -863,7 +863,7 @@ parentsSelector s = jq_parents (toJSString s)
 parentsUntil :: Selector -> Maybe Selector -> JQuery -> IO JQuery
 parentsUntil s mf = jq_parentsUntil (castRef $ toJSString s) (maybe jsNull (castRef . toJSString) mf)
 
-parentsUntilElement :: ElementClass e => e -> Maybe Selector -> JQuery -> IO JQuery
+parentsUntilElement :: IsElement e => e -> Maybe Selector -> JQuery -> IO JQuery
 parentsUntilElement e mf = jq_parentsUntil (castRef . unElement $ toElement e) (maybe jsNull (castRef . toJSString) mf)
 
 prev :: JQuery -> IO JQuery
@@ -881,7 +881,7 @@ prevAllSelector s = jq_prevAll (toJSString s)
 prevUntil :: Selector -> Maybe Selector -> JQuery -> IO JQuery
 prevUntil s mf = jq_prevUntil (castRef $ toJSString s) (maybe jsNull toJSString mf)
 
-prevUntilElement :: ElementClass e => e -> Maybe Selector -> JQuery -> IO JQuery
+prevUntilElement :: IsElement e => e -> Maybe Selector -> JQuery -> IO JQuery
 prevUntilElement e mf = jq_prevUntil (castRef . unElement $ toElement e) (maybe jsNull toJSString mf)
 
 siblings :: JQuery -> IO JQuery
