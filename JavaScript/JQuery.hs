@@ -187,7 +187,7 @@ module JavaScript.JQuery ( JQuery(..)
 import           Prelude hiding (filter, not, empty, last)
 
 import           GHCJS.Marshal
-import           GHCJS.Foreign ( ToJSString(..), FromJSString(..), newObj, fromJSBool
+import           GHCJS.Foreign ( ToJSString(..), FromJSString(..), newObj
                                , toJSBool, jsNull, jsFalse, jsTrue, mvarRef
                                )
 import           GHCJS.Types
@@ -262,9 +262,9 @@ data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsHandlerData              :: Maybe (JSRef ())
                                        }
 
-convertHandlerSettings :: HandlerSettings -> (JSBool, JSBool, JSBool, JSString, JSRef ())
+convertHandlerSettings :: HandlerSettings -> (Bool, Bool, Bool, JSString, JSRef ())
 convertHandlerSettings (HandlerSettings pd sp sip ds hd) =
-  (toJSBool pd, toJSBool sp, toJSBool sip, maybe jsNull toJSString ds, fromMaybe jsNull hd)
+  (pd, sp, sip, maybe jsNull toJSString ds, fromMaybe jsNull hd)
 
 instance Default HandlerSettings where
   def = HandlerSettings False False False Nothing Nothing
@@ -279,7 +279,7 @@ setAttr :: Text -> Text -> JQuery -> IO JQuery
 setAttr a v = jq_setAttr (toJSString a) (toJSString v)
 
 hasClass :: Text -> JQuery -> IO Bool
-hasClass c jq = fromJSBool <$> jq_hasClass (toJSString c) jq
+hasClass c jq = jq_hasClass (toJSString c) jq
 
 getHtml :: JQuery -> IO Text
 getHtml jq = fromJSString <$> jq_getHtml jq
@@ -319,7 +319,7 @@ setText :: Text -> JQuery -> IO JQuery
 setText t = jq_setText (toJSString t)
 
 holdReady :: Bool -> IO ()
-holdReady b = jq_holdReady (toJSBool b)
+holdReady b = jq_holdReady b
 
 selectElement :: IsElement e => e -> IO JQuery
 selectElement e = jq_selectElement (unElement (toElement e))
@@ -364,12 +364,12 @@ getInnerWidth = jq_getInnerWidth
 getOuterHeight :: Bool   -- ^ include margin?
                -> JQuery
                -> IO Double
-getOuterHeight b = jq_getOuterHeight (toJSBool b)
+getOuterHeight b = jq_getOuterHeight b
 
 getOuterWidth :: Bool    -- ^ include margin?
               -> JQuery
               -> IO Double
-getOuterWidth b = jq_getOuterWidth (toJSBool b)
+getOuterWidth b = jq_getOuterWidth b
 
 getScrollLeft :: JQuery -> IO Double
 getScrollLeft = jq_getScrollLeft
@@ -494,13 +494,13 @@ delegateTarget :: Event -> IO Element
 delegateTarget ev = Element <$> jq_delegateTarget ev
 
 isDefaultPrevented :: Event -> IO Bool
-isDefaultPrevented e = fromJSBool <$> jq_isDefaultPrevented e
+isDefaultPrevented e = jq_isDefaultPrevented e
 
 isImmediatePropagationStopped :: Event -> IO Bool
-isImmediatePropagationStopped e = fromJSBool <$> jq_isImmediatePropagationStopped e
+isImmediatePropagationStopped e = jq_isImmediatePropagationStopped e
 
 isPropagationStopped :: Event -> IO Bool
-isPropagationStopped e = fromJSBool <$> jq_isPropagationStopped e
+isPropagationStopped e = jq_isPropagationStopped e
 
 namespace :: Event -> IO Text
 namespace e = fromJSString <$> jq_namespace e
@@ -624,9 +624,9 @@ data CloneType = WithoutDataAndEvents
                | DeepWithDataAndEvents
 
 clone :: CloneType -> JQuery -> IO JQuery
-clone WithoutDataAndEvents  = jq_clone jsFalse jsFalse
-clone WithDataAndEvents     = jq_clone jsTrue  jsFalse
-clone DeepWithDataAndEvents = jq_clone jsTrue  jsFalse
+clone WithoutDataAndEvents  = jq_clone False False
+clone WithDataAndEvents     = jq_clone True  False
+clone DeepWithDataAndEvents = jq_clone True  True
 
 detach :: JQuery -> IO JQuery
 detach = jq_detach jsNull
