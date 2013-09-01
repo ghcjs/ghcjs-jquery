@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, EmptyDataDecls #-}
+{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, CPP, EmptyDataDecls #-}
 
 module JavaScript.JQuery.Internal where
 
@@ -14,6 +14,7 @@ data Event_
 type JQuery = JSRef JQuery_
 type Event = JSRef Event_
 
+#ifdef __GHCJS__
 foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
 foreign import javascript unsafe "$3.attr($1,$2)"        jq_setAttr           :: JSString -> JSString -> JQuery -> IO JQuery
@@ -116,12 +117,12 @@ foreign import javascript unsafe "$2.slice($1)"                       jq_slice  
 foreign import javascript unsafe "$1.slice($1,$2)"                    jq_sliceFromTo       :: Int -> Int           -> JQuery -> IO JQuery
 
 foreign import javascript safe "jQuery.ajax($1,$2).always(function(d,ts,xhr) {\
-                               \   if(typeof(d) === 'string') {\
-                               \     $c({ data: d, status: xhr.status });\
-                               \    } else {\
-                               \     $c({ data: null, status: d.status });\
-                               \   }\
-                               \});"
+                                  if(typeof(d) === 'string') {\
+                                    $c({ data: d, status: xhr.status });\
+                                   } else {\
+                                    $c({ data: null, status: d.status });\
+                                  }\
+                                });"
   jq_ajax :: JSString
           -> JSRef ajaxSettings
           -> IO (JSRef ajaxResult)
@@ -148,4 +149,12 @@ foreign import javascript unsafe "$8.one($2, $3, $4, h$makeMVarListener($1, $5, 
          -> JQuery
          -> IO JQuery
 
+#else
+jq_ajax                          = error "jq_ajax: only available in JavaScript"
 
+jq_on                            = error "jq_on: only available in JavaScript"
+jq_one                           = error "jq_one: only available in JavaScript"
+
+#include "nonghcjs.txt"
+
+#endif

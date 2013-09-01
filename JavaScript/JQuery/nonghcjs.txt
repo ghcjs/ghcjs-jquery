@@ -1,0 +1,194 @@
+jq_addClass :: JSString -> JQuery -> IO JQuery
+jq_addClass = error "jq_addClass: only available in JavaScript"
+jq_getAttr :: JSString -> JQuery -> IO JSString
+jq_getAttr = error "jq_getAttr: only available in JavaScript"
+jq_setAttr :: JSString -> JSString -> JQuery -> IO JQuery
+jq_setAttr = error "jq_setAttr: only available in JavaScript"
+jq_hasClass :: JSString -> JQuery -> IO Bool
+jq_hasClass = error "jq_hasClass: only available in JavaScript"
+jq_getHtml :: JQuery -> IO JSString
+jq_getHtml = error "jq_getHtml: only available in JavaScript"
+jq_setHtml :: JSString -> JQuery -> IO JQuery
+jq_setHtml = error "jq_setHtml: only available in JavaScript"
+jq_getProp :: JSString -> JQuery -> IO JSString
+jq_getProp = error "jq_getProp: only available in JavaScript"
+jq_setProp :: JSString -> JSString -> JQuery -> IO JQuery
+jq_setProp = error "jq_setProp: only available in JavaScript"
+jq_removeAttr :: JSString -> JQuery -> IO JQuery
+jq_removeAttr = error "jq_removeAttr: only available in JavaScript"
+jq_removeClass :: JSString -> JQuery -> IO JQuery
+jq_removeClass = error "jq_removeClass: only available in JavaScript"
+jq_removeProp :: JSString -> JQuery -> IO JQuery
+jq_removeProp = error "jq_removeProp: only available in JavaScript"
+jq_getVal :: JQuery -> IO JSString
+jq_getVal = error "jq_getVal: only available in JavaScript"
+jq_setVal :: JSString -> JQuery -> IO JQuery
+jq_setVal = error "jq_setVal: only available in JavaScript"
+jq_getText :: JQuery -> IO JSString
+jq_getText = error "jq_getText: only available in JavaScript"
+jq_setText :: JSString -> JQuery -> IO JQuery
+jq_setText = error "jq_setText: only available in JavaScript"
+jq_holdReady :: Bool -> IO ()
+jq_holdReady = error "jq_holdReady: only available in JavaScript"
+jq_selectElement :: JSRef Element -> IO JQuery
+jq_selectElement = error "jq_selectElement: only available in JavaScript"
+jq_selectObject :: JSRef () -> IO JQuery
+jq_selectObject = error "jq_selectObject: only available in JavaScript"
+jq_select :: JSString -> IO JQuery
+jq_select = error "jq_select: only available in JavaScript"
+jq_selectEmpty :: IO JQuery
+jq_selectEmpty = error "jq_selectEmpty: only available in JavaScript"
+jq_selectWithContext :: JSString -> JSRef () -> IO JQuery
+jq_selectWithContext = error "jq_selectWithContext: only available in JavaScript"
+jq_getCss :: JSString -> JQuery -> IO JSString
+jq_getCss = error "jq_getCss: only available in JavaScript"
+jq_setCss :: JSString -> JSString -> JQuery -> IO JQuery
+jq_setCss = error "jq_setCss: only available in JavaScript"
+jq_getHeight :: JQuery -> IO Double
+jq_getHeight = error "jq_getHeight: only available in JavaScript"
+jq_setHeight :: Double -> JQuery -> IO JQuery
+jq_setHeight = error "jq_setHeight: only available in JavaScript"
+jq_getWidth :: JQuery -> IO Double
+jq_getWidth = error "jq_getWidth: only available in JavaScript"
+jq_setWidth :: Double -> JQuery -> IO JQuery
+jq_setWidth = error "jq_setWidth: only available in JavaScript"
+jq_getInnerHeight :: JQuery -> IO Double
+jq_getInnerHeight = error "jq_getInnerHeight: only available in JavaScript"
+jq_getInnerWidth :: JQuery -> IO Double
+jq_getInnerWidth = error "jq_getInnerWidth: only available in JavaScript"
+jq_getOuterHeight :: Bool -> JQuery -> IO Double
+jq_getOuterHeight = error "jq_getOuterHeight: only available in JavaScript"
+jq_getOuterWidth :: Bool -> JQuery -> IO Double
+jq_getOuterWidth = error "jq_getOuterWidth: only available in JavaScript"
+jq_trigger :: JSString -> JQuery -> IO ()
+jq_trigger = error "jq_trigger: only available in JavaScript"
+jq_triggerHandler :: JSString -> JQuery -> IO ()
+jq_triggerHandler = error "jq_triggerHandler: only available in JavaScript"
+jq_getScrollLeft :: JQuery -> IO Double
+jq_getScrollLeft = error "jq_getScrollLeft: only available in JavaScript"
+jq_setScrollLeft :: Double -> JQuery -> IO JQuery
+jq_setScrollLeft = error "jq_setScrollLeft: only available in JavaScript"
+jq_getScrollTop :: JQuery -> IO Double
+jq_getScrollTop = error "jq_getScrollTop: only available in JavaScript"
+jq_setScrollTop :: Double -> JQuery -> IO JQuery
+jq_setScrollTop = error "jq_setScrollTop: only available in JavaScript"
+jq_focus :: JQuery -> IO JQuery
+jq_focus = error "jq_focus: only available in JavaScript"
+jq_delegateTarget :: Event -> IO (JSRef Element)
+jq_delegateTarget = error "jq_delegateTarget: only available in JavaScript"
+jq_isDefaultPrevented :: Event -> IO Bool
+jq_isDefaultPrevented = error "jq_isDefaultPrevented: only available in JavaScript"
+jq_isImmediatePropagationStopped :: Event -> IO Bool
+jq_isImmediatePropagationStopped = error "jq_isImmediatePropagationStopped: only available in JavaScript"
+jq_isPropagationStopped :: Event -> IO Bool
+jq_isPropagationStopped = error "jq_isPropagationStopped: only available in JavaScript"
+jq_namespace :: Event -> IO JSString
+jq_namespace = error "jq_namespace: only available in JavaScript"
+jq_pageX :: Event -> IO Double -- fixme might not exist
+jq_pageX = error "jq_pageX: only available in JavaScript"
+jq_pageY :: Event -> IO Double -- fixme might not exist
+jq_pageY = error "jq_pageY: only available in JavaScript"
+jq_preventDefault :: Event -> IO ()
+jq_preventDefault = error "jq_preventDefault: only available in JavaScript"
+jq_stopPropagation :: Event -> IO ()
+jq_stopPropagation = error "jq_stopPropagation: only available in JavaScript"
+jq_stopImmediatePropagation :: Event -> IO ()
+jq_stopImmediatePropagation = error "jq_stopImmediatePropagation: only available in JavaScript"
+jq_target :: Event -> IO (JSRef Element)
+jq_target = error "jq_target: only available in JavaScript"
+jq_timeStamp :: Event -> IO Double
+jq_timeStamp = error "jq_timeStamp: only available in JavaScript"
+jq_eventType :: Event -> IO JSString
+jq_eventType = error "jq_eventType: only available in JavaScript"
+jq_eventWhich :: Event -> IO Int -- fixme might not exist?
+jq_eventWhich = error "jq_eventWhich: only available in JavaScript"
+jq_after :: JSRef () -> JQuery -> IO JQuery
+jq_after = error "jq_after: only available in JavaScript"
+jq_append :: JSRef () -> JQuery -> IO JQuery
+jq_append = error "jq_append: only available in JavaScript"
+jq_appendTo :: JSRef () -> JQuery -> IO JQuery
+jq_appendTo = error "jq_appendTo: only available in JavaScript"
+jq_before :: JSRef () -> JQuery -> IO JQuery
+jq_before = error "jq_before: only available in JavaScript"
+jq_clone :: Bool -> Bool -> JQuery -> IO JQuery
+jq_clone = error "jq_clone: only available in JavaScript"
+jq_detach :: JSString -> JQuery -> IO JQuery
+jq_detach = error "jq_detach: only available in JavaScript"
+jq_empty :: JQuery -> IO JQuery
+jq_empty = error "jq_empty: only available in JavaScript"
+jq_insertAfter :: JSRef () -> JQuery -> IO JQuery
+jq_insertAfter = error "jq_insertAfter: only available in JavaScript"
+jq_insertBefore :: JSRef () -> JQuery -> IO JQuery
+jq_insertBefore = error "jq_insertBefore: only available in JavaScript"
+jq_prepend :: JSRef () -> JQuery -> IO JQuery
+jq_prepend = error "jq_prepend: only available in JavaScript"
+jq_prependTo :: JSRef () -> JQuery -> IO JQuery
+jq_prependTo = error "jq_prependTo: only available in JavaScript"
+jq_remove :: JSString -> JQuery -> IO JQuery
+jq_remove = error "jq_remove: only available in JavaScript"
+jq_replaceAll :: JSRef () -> JQuery -> IO JQuery
+jq_replaceAll = error "jq_replaceAll: only available in JavaScript"
+jq_replaceWith :: JSRef () -> JQuery -> IO JQuery
+jq_replaceWith = error "jq_replaceWith: only available in JavaScript"
+jq_unwrap :: JQuery -> IO JQuery
+jq_unwrap = error "jq_unwrap: only available in JavaScript"
+jq_wrap :: JSRef () -> JQuery -> IO JQuery
+jq_wrap = error "jq_wrap: only available in JavaScript"
+jq_wrapAll :: JSRef () -> JQuery -> IO JQuery
+jq_wrapAll = error "jq_wrapAll: only available in JavaScript"
+jq_wrapInner :: JSRef () -> JQuery -> IO JQuery
+jq_wrapInner = error "jq_wrapInner: only available in JavaScript"
+jq_add :: JSRef () -> JQuery -> IO JQuery
+jq_add = error "jq_add: only available in JavaScript"
+jq_andSelf :: JQuery -> IO JQuery
+jq_andSelf = error "jq_andSelf: only available in JavaScript"
+jq_children :: JSString -> JQuery -> IO JQuery
+jq_children = error "jq_children: only available in JavaScript"
+jq_closest :: JSRef () -> JQuery -> IO JQuery
+jq_closest = error "jq_closest: only available in JavaScript"
+jq_contents :: JQuery -> IO JQuery
+jq_contents = error "jq_contents: only available in JavaScript"
+jq_end :: JQuery -> IO JQuery
+jq_end = error "jq_end: only available in JavaScript"
+jq_eq :: Int -> JQuery -> IO JQuery
+jq_eq = error "jq_eq: only available in JavaScript"
+jq_filter :: JSRef () -> JQuery -> IO JQuery
+jq_filter = error "jq_filter: only available in JavaScript"
+jq_find :: JSRef () -> JQuery -> IO JQuery
+jq_find = error "jq_find: only available in JavaScript"
+jq_first :: JQuery -> IO JQuery
+jq_first = error "jq_first: only available in JavaScript"
+jq_has :: JSRef () -> JQuery -> IO JQuery
+jq_has = error "jq_has: only available in JavaScript"
+jq_is :: JSRef () -> JQuery -> IO JQuery
+jq_is = error "jq_is: only available in JavaScript"
+jq_last :: JQuery -> IO JQuery
+jq_last = error "jq_last: only available in JavaScript"
+jq_next :: JSString -> JQuery -> IO JQuery
+jq_next = error "jq_next: only available in JavaScript"
+jq_nextAll :: JSString -> JQuery -> IO JQuery
+jq_nextAll = error "jq_nextAll: only available in JavaScript"
+jq_nextUntil :: JSRef () -> JSString -> JQuery -> IO JQuery
+jq_nextUntil = error "jq_nextUntil: only available in JavaScript"
+jq_not :: JSRef () -> JQuery -> IO JQuery
+jq_not = error "jq_not: only available in JavaScript"
+jq_offsetParent :: JQuery -> IO JQuery
+jq_offsetParent = error "jq_offsetParent: only available in JavaScript"
+jq_parent :: JSString -> JQuery -> IO JQuery
+jq_parent = error "jq_parent: only available in JavaScript"
+jq_parents :: JSString -> JQuery -> IO JQuery
+jq_parents = error "jq_parents: only available in JavaScript"
+jq_parentsUntil :: JSRef () -> JSString -> JQuery -> IO JQuery
+jq_parentsUntil = error "jq_parentsUntil: only available in JavaScript"
+jq_prev :: JSString -> JQuery -> IO JQuery
+jq_prev = error "jq_prev: only available in JavaScript"
+jq_prevAll :: JSString -> JQuery -> IO JQuery
+jq_prevAll = error "jq_prevAll: only available in JavaScript"
+jq_prevUntil :: JSString -> JSString -> JQuery -> IO JQuery
+jq_prevUntil = error "jq_prevUntil: only available in JavaScript"
+jq_siblings :: JSString -> JQuery -> IO JQuery
+jq_siblings = error "jq_siblings: only available in JavaScript"
+jq_slice :: Int -> JQuery -> IO JQuery
+jq_slice = error "jq_slice: only available in JavaScript"
+jq_sliceFromTo :: Int -> Int -> JQuery -> IO JQuery
+jq_sliceFromTo = error "jq_sliceFromTo: only available in JavaScript"
