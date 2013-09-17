@@ -1,5 +1,7 @@
 jq_addClass :: JSString -> JQuery -> IO JQuery
 jq_addClass = error "jq_addClass: only available in JavaScript"
+jq_animate :: JSObject a -> JSObject b -> JQuery -> IO JQuery
+jq_animate = error "jq_animate: only available in JavaScript"
 jq_getAttr :: JSString -> JQuery -> IO JSString
 jq_getAttr = error "jq_getAttr: only available in JavaScript"
 jq_setAttr :: JSString -> JSString -> JQuery -> IO JQuery
@@ -72,6 +74,8 @@ jq_getScrollTop :: JQuery -> IO Double
 jq_getScrollTop = error "jq_getScrollTop: only available in JavaScript"
 jq_setScrollTop :: Double -> JQuery -> IO JQuery
 jq_setScrollTop = error "jq_setScrollTop: only available in JavaScript"
+jq_stop :: Bool -> JQuery -> IO JQuery
+jq_stop = error "jq_stop: only available in JavaScript"
 jq_focus :: JQuery -> IO JQuery
 jq_focus = error "jq_focus: only available in JavaScript"
 jq_delegateTarget :: Event -> IO (JSRef Element)
