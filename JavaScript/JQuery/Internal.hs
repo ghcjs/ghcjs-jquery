@@ -16,6 +16,7 @@ type Event = JSRef Event_
 
 #ifdef __GHCJS__
 foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSObject a -> JSObject b -> JQuery -> IO JQuery           
 foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
 foreign import javascript unsafe "$3.attr($1,$2)"        jq_setAttr           :: JSString -> JSString -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.hasClass($1)"       jq_hasClass          :: JSString             -> JQuery -> IO Bool
@@ -52,6 +53,7 @@ foreign import javascript unsafe "$1.scrollLeft()"       jq_getScrollLeft     ::
 foreign import javascript unsafe "$2.scrollLeft($1)"     jq_setScrollLeft     :: Double               -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.scrollTop()"        jq_getScrollTop      ::                         JQuery -> IO Double
 foreign import javascript unsafe "$2.scrollTop($1)"      jq_setScrollTop      :: Double               -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.stop($1)"           jq_stop              :: Bool                 -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.focus()"            jq_focus             ::                         JQuery -> IO JQuery
 
 foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO (JSRef Element)
