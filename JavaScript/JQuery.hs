@@ -14,6 +14,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , ajax
                          , HandlerSettings(..)
                          , addClass
+                         , animate
                          , getAttr
                          , setAttr
                          , hasClass
@@ -182,6 +183,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , siblingsSelector
                          , slice
                          , sliceFromTo
+                         , stop
                          ) where
 
 import           Prelude hiding (filter, not, empty, last)
@@ -271,6 +273,9 @@ instance Default HandlerSettings where
 
 addClass :: Text -> JQuery -> IO JQuery
 addClass c = jq_addClass (toJSString c)
+
+animate :: JSObject a -> JSObject b -> JQuery -> IO JQuery
+animate = jq_animate
 
 getAttr :: Text -> JQuery -> IO Text
 getAttr a jq = fromJSString <$> jq_getAttr (toJSString a) jq
@@ -896,4 +901,5 @@ slice = jq_slice
 sliceFromTo :: Int -> Int -> JQuery -> IO JQuery
 sliceFromTo = jq_sliceFromTo
 
-
+stop :: Bool -> JQuery -> IO JQuery
+stop = jq_stop
