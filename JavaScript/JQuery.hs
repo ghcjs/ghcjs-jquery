@@ -8,7 +8,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , Event(..)
                          , EventType
                          , Selector
-                         , Method
+                         , Method(..)
                          , AjaxSettings(..)
                          , AjaxResult(..)
                          , ajax
