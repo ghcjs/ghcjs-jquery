@@ -164,7 +164,7 @@ jq_first :: JQuery -> IO JQuery
 jq_first = error "jq_first: only available in JavaScript"
 jq_has :: JSRef () -> JQuery -> IO JQuery
 jq_has = error "jq_has: only available in JavaScript"
-jq_is :: JSRef () -> JQuery -> IO JQuery
+jq_is :: JSRef () -> JQuery -> IO Bool
 jq_is = error "jq_is: only available in JavaScript"
 jq_last :: JQuery -> IO JQuery
 jq_last = error "jq_last: only available in JavaScript"

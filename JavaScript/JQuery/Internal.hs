@@ -101,7 +101,7 @@ foreign import javascript unsafe "$2.filter($1)"                      jq_filter 
 foreign import javascript unsafe "$2.find($1)"                        jq_find              :: JSRef ()             -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.first()"                         jq_first             ::                         JQuery -> IO JQuery
 foreign import javascript unsafe "$2.has($1)"                         jq_has               :: JSRef ()             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.is($1)"                          jq_is                :: JSRef ()             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.is($1)"                          jq_is                :: JSRef ()             -> JQuery -> IO Bool
 foreign import javascript unsafe "$1.last()"                          jq_last              ::                         JQuery -> IO JQuery
 foreign import javascript unsafe "$2.next($1)"                        jq_next              :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.nextAll($1)"                     jq_nextAll           :: JSString             -> JQuery -> IO JQuery

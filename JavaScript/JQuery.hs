@@ -808,13 +808,13 @@ has s = jq_has (castRef $ toJSString s)
 hasElement :: IsElement e => e -> JQuery -> IO JQuery
 hasElement e = jq_has (castRef . unElement $ toElement e)
 
-is :: Selector -> JQuery -> IO JQuery
+is :: Selector -> JQuery -> IO Bool
 is s = jq_is (castRef $ toJSString s)
 
-isJQuery :: JQuery -> JQuery -> IO JQuery
+isJQuery :: JQuery -> JQuery -> IO Bool
 isJQuery j = jq_is (castRef j)
 
-isElement :: IsElement e => e -> JQuery -> IO JQuery
+isElement :: IsElement e => e -> JQuery -> IO Bool
 isElement e = jq_is (castRef . unElement $ toElement e)
 
 last :: JQuery -> IO JQuery
