@@ -14,7 +14,7 @@ data Event_
 type JQuery = JSRef JQuery_
 type Event = JSRef Event_
 
-#ifdef __GHCJS__
+#ifdef ghcjs_HOST_OS
 foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSObject a -> JSObject b -> JQuery -> IO JQuery           
 foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
