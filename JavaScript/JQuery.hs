@@ -49,18 +49,18 @@ module JavaScript.JQuery ( JQuery(..)
                          , setScrollLeft
                          , getScrollTop
                          , setScrollTop
-                         , click, click'
-                         , dblclick, dblclick'
-                         , focusin, focusin'
-                         , focusout, focusout'
-                         , hover, hover'
-                         , mousedown, mousedown'
-                         , mouseenter, mouseenter'
-                         , mouseleave, mouseleave'
-                         , mousemove, mousemove'
-                         , mouseup, mouseup'
-                         , on, on'
-                         , one, one'
+                         , click
+                         , dblclick
+                         , focusin
+                         , focusout
+                         , hover
+                         , mousedown
+                         , mouseenter
+                         , mouseleave
+                         , mousemove
+                         , mouseup
+                         , on
+                         , one
                          , triggerHandler
                          , delegateTarget
                          , isDefaultPrevented
@@ -76,14 +76,14 @@ module JavaScript.JQuery ( JQuery(..)
                          , timeStamp
                          , eventType
                          , which
-                         , blur, blur'
-                         , change, change'
-                         , onFocus, onFocus'
+                         , blur
+                         , change
+                         , onFocus
                          , focus
-                         , onSelect, select'
-                         , keydown, keydown'
-                         , keyup, keyup'
-                         , keypress, keypress'
+                         , onSelect
+                         , keydown
+                         , keyup
+                         , keypress
                          , after
                          , afterJQuery
                          , afterElem
@@ -209,6 +209,8 @@ import           Data.Maybe
 import           Data.Text (Text)
 import           Data.Typeable
 
+import           System.IO (fixIO)
+
 type EventType = Text
 type Selector  = Text
 
@@ -260,16 +262,17 @@ ajax url d s = do
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopPropagation          :: Bool
                                        , hsStopImmediatePropagation :: Bool
+                                       , hsSynchronous              :: Bool
                                        , hsDescendantFilter         :: Maybe Selector
                                        , hsHandlerData              :: Maybe (JSRef ())
                                        }
 
 convertHandlerSettings :: HandlerSettings -> (Bool, Bool, Bool, JSString, JSRef ())
-convertHandlerSettings (HandlerSettings pd sp sip ds hd) =
+convertHandlerSettings (HandlerSettings pd sp sip _ ds hd) =
   (pd, sp, sip, maybe jsNull toJSString ds, fromMaybe jsNull hd)
 
 instance Default HandlerSettings where
-  def = HandlerSettings False False False Nothing Nothing
+  def = HandlerSettings False False False True Nothing Nothing
 
 addClass :: Text -> JQuery -> IO JQuery
 addClass c = jq_addClass (toJSString c)
@@ -388,106 +391,71 @@ getScrollTop = jq_getScrollTop
 setScrollTop :: Double -> JQuery -> IO JQuery
 setScrollTop = jq_setScrollTop
 
-mkListener :: (JSObject (MVar Event) -> JQuery -> IO JQuery)
-           -> (Event -> IO ()) -> JQuery -> IO JQuery
-mkListener f a jq = do
-  mv <- newEmptyMVar
-  forkIO (forever $ takeMVar mv >>= a)
-  f (mvarRef mv) jq
-
-click :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+click :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 click a = on a "click"
 
-click' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-click' a = on' a "click"
-
-dblclick :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+dblclick :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 dblclick a = on a "dblclick"
 
-dblclick' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-dblclick' a = on' a "dblclick"
-
-focusin :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+focusin :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 focusin a = on a "focusin"
 
-focusin' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-focusin' a = on' a "focusin"
-
-focusout :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+focusout :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 focusout a = on a "focusout"
 
-focusout' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-focusout' a = on' a "focusout"
-
-hover :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+hover :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 hover a = on a "hover"
 
-hover' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-hover' a = on' a "hover"
-
-mousedown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mousedown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mousedown a = on a "mousedown"
 
-mousedown' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mousedown' a = on' a "mousedown"
-
-mouseenter :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mouseenter :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mouseenter a = on a "mouseenter"
 
-mouseenter' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mouseenter' a = on' a "mouseenter"
-
-mouseleave :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mouseleave :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mouseleave a = on a "mouseleave"
 
-mouseleave' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mouseleave' a = on' a "mouseleave"
-
-mousemove :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mousemove :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mousemove a = on a "mousemove"
 
-mousemove' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mousemove' a = on' a "mousemove"
-
-mouseout :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mouseout :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mouseout a = on a "mouseout"
 
-mouseout' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mouseout' a = on' a "mouseout"
-
-mouseover :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mouseover :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mouseover a = on a "mouseover"
 
-mouseover' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mouseover' a = on' a "mouseover"
-
-mouseup :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+mouseup :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 mouseup a = on a "mouseup"
 
-mouseup' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-mouseup' a = on' a "mouseup"
+{- |  Register an event handler. Use the returned IO action to remove the
+      handler.
 
--- off() TODO how should this be handled?
+      Note that the handler will stay in memory until the returned IO action is
+      executed, even if the DOM nodes are removed.
+ -}
+on :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
+on a et hs jq = do
+  cb <- if hsSynchronous hs
+          then F.syncCallback1 F.AlwaysRetain True a
+          else F.asyncCallback1 F.AlwaysRetain a
+  jq_on cb et' ds hd sp sip pd jq
+  return (jq_off cb et' ds jq >> F.release cb)
+    where
+      et'                   = toJSString et
+      (pd, sp, sip, ds, hd) = convertHandlerSettings hs
 
-on :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO JQuery
-on a et hs jq = mkListener (\mv -> jq_on mv (toJSString et) ds hd sp sip pd) a jq
-                  where
-                    (pd, sp, sip, ds, hd) = convertHandlerSettings hs
-
-on' :: MVar Event -> EventType -> HandlerSettings -> JQuery -> IO JQuery
-on' mv et hs jq = jq_on (mvarRef mv) (toJSString et) ds hd sp sip pd jq
-                    where
-                      (pd, sp, sip, ds, hd) = convertHandlerSettings hs
-
-one :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO JQuery
-one a et hs jq = mkListener (\mv -> jq_one mv (toJSString et) ds hd sp sip pd) a jq
-                   where
-                     (pd, sp, sip, ds, hd) = convertHandlerSettings hs
-
-one' :: MVar Event -> EventType -> HandlerSettings -> JQuery -> IO JQuery
-one' mv et hs jq = jq_one (mvarRef mv) (toJSString et) ds hd sp sip pd jq
-                     where
-                       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
+one :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
+one a et hs jq = do
+  cb <- fixIO $ \cb ->
+      let a' = \e -> F.release cb >> a e
+      in if hsSynchronous hs
+            then F.syncCallback1 F.AlwaysRetain True a
+            else F.asyncCallback1 F.AlwaysRetain a
+  jq_one cb et' ds hd sp sip pd jq
+  return (jq_off cb et' ds jq >> F.release cb)
+    where
+      et'                   = toJSString et
+      (pd, sp, sip, ds, hd) = convertHandlerSettings hs
 
 trigger :: EventType -> JQuery -> IO ()
 trigger et jq = jq_trigger (toJSString et) jq
@@ -537,56 +505,32 @@ eventType e = fromJSString <$> jq_eventType e
 which :: Event -> IO Int
 which = jq_eventWhich
 
-blur :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+blur :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 blur a = on a "blur"
 
-blur' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-blur' a = on' a "blur"
-
-change :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+change :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 change a = on a "change"
 
-change' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-change' a = on' a "change"
-
-onFocus :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+onFocus :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 onFocus a = on a "focus"
-
-onFocus' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-onFocus' a = on' a "focus"
 
 focus :: JQuery -> IO JQuery
 focus = jq_focus
 
-onSelect :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+onSelect :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 onSelect a = on a "select"
 
-select' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-select' a = on' a "select"
-
-submit :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+submit :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 submit a = on a "submit"
 
-submit' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-submit' a = on' a "submit"
-
-keydown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+keydown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 keydown a = on a "keydown"
 
-keydown' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-keydown' a = on' a "keydown"
-
-keyup :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+keyup :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 keyup a = on a "keyup"
 
-keyup' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-keyup' a = on' a "keyup"
-
-keypress :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO JQuery
+keypress :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 keypress a = on a "keypress"
-
-keypress' :: MVar Event -> HandlerSettings -> JQuery -> IO JQuery
-keypress' a = on' a "keypress"
 
 after :: Text -> JQuery -> IO JQuery
 after h jq = jq_after (castRef $ toJSString h) jq
