@@ -129,33 +129,40 @@ foreign import javascript interruptible "jQuery.ajax($1,$2).always(function(d,ts
           -> JSRef ajaxSettings
           -> IO (JSRef ajaxResult)
 
-foreign import javascript unsafe "$8.on($2, $3, $4, h$makeMVarListener($1, $5, $6, $7))"
-  jq_on :: JSObject (MVar Event)
+foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
+  jq_on :: JSFun a                -- ^ callback
         -> JSString               -- ^ event type
         -> JSString               -- ^ descendant selector
-        -> JSRef a                -- ^ data
+        -> JSRef b                -- ^ data
         -> Bool                   -- ^ stopPropagation
         -> Bool                   -- ^ stopImmediatePropagation
         -> Bool                   -- ^ preventDefault
         -> JQuery
-        -> IO JQuery
+        -> IO ()
 
-foreign import javascript unsafe "$8.one($2, $3, $4, h$makeMVarListener($1, $5, $6, $7))"
-  jq_one :: JSObject (MVar Event)
+foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
+  jq_one :: JSFun a                -- ^ callback
          -> JSString               -- ^ event type
          -> JSString               -- ^ descendant selector
-         -> JSRef a                -- ^ data
+         -> JSRef b                -- ^ data
          -> Bool                   -- ^ stopPropagation
          -> Bool                   -- ^ stopImmediatePropagation
          -> Bool                   -- ^ preventDefault
          -> JQuery
-         -> IO JQuery
+         -> IO ()
 
+foreign import javascript unsafe "$4.off($2,$3,$1)"
+  jq_off :: JSFun a                -- ^ callback
+         -> JSString               -- ^ event type
+         -> JSString               -- ^ descendant selector
+         -> JQuery
+         -> IO ()
 #else
 jq_ajax                          = error "jq_ajax: only available in JavaScript"
 
 jq_on                            = error "jq_on: only available in JavaScript"
 jq_one                           = error "jq_one: only available in JavaScript"
+jq_off                           = error "jq_off: only available in JavaScript"
 
 #include "nonghcjs.txt"
 
