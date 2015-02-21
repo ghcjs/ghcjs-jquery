@@ -19,6 +19,7 @@ library
   exposed-modules:   JavaScript.JQuery
                      JavaScript.JQuery.Internal
   build-depends:     base ==4.7.*,
+                     aeson,
                      data-default,
                      ghcjs-base,
                      ghcjs-dom,
