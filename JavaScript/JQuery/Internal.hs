@@ -118,13 +118,12 @@ foreign import javascript unsafe "$2.siblings($1)"                    jq_sibling
 foreign import javascript unsafe "$2.slice($1)"                       jq_slice             :: Int                  -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.slice($1,$2)"                    jq_sliceFromTo       :: Int -> Int           -> JQuery -> IO JQuery
 
-foreign import javascript interruptible "jQuery.ajax($1,$2).always(function(d,ts,xhr) {\
-                                  if(typeof(d) === 'string') {\
-                                    $c({ data: d, status: xhr.status });\
-                                   } else {\
-                                    $c({ data: null, status: d.status });\
-                                  }\
-                                });"
+foreign import javascript interruptible
+  "jQuery.ajax($1,$2).then(function(d,ts,xhr) {\
+        $c({ data: d, status: xhr.status });\
+      }).fail(function(xhr) {\
+        $c({ data: null, status: xhr.status });\
+      });"
   jq_ajax :: JSString
           -> JSRef ajaxSettings
           -> IO (JSRef ajaxResult)

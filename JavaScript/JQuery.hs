@@ -229,8 +229,8 @@ data AjaxSettings = AjaxSettings { asContentType :: Maybe Text
                                  } deriving (Ord, Eq, Show, Typeable)
 
 data AjaxResult = AjaxResult { arStatus :: Int
-                             , arData   :: Maybe Text
-                             } deriving (Ord, Eq, Show, Typeable)
+                             , arData   :: Value
+                             } deriving (Eq, Show, Typeable)
 
 instance Default AjaxSettings where
   def = AjaxSettings Nothing True False GET
@@ -284,9 +284,8 @@ ajax url d s = do
                   ]
   o2 <- toJSRef o1
   arr <- jq_ajax (toJSString url) o2
-  dat <- F.getProp ("data"::Text) arr
-  let d = if isNull dat then Nothing else Just (fromJSString dat)
   status <- fromMaybe 0 <$> (fromJSRef =<< F.getProp ("status"::Text) arr)
+  d <- fromMaybe Null <$> (fromJSRef =<< F.getProp ("data"::Text) arr)
   return (AjaxResult status d)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
