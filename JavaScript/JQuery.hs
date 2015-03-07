@@ -220,7 +220,8 @@ import           System.IO (fixIO)
 type EventType = Text
 type Selector  = Text
 
-data Method = GET | POST | PUT | DELETE deriving (Eq, Ord, Enum, Show)
+data Method = GET | POST | PUT | DELETE | DefaultFromType_
+  deriving (Eq, Ord, Enum, Show)
 
 data AjaxSettings = AjaxSettings { asContentType :: Maybe Text
                                  , asCache       :: Bool
@@ -233,7 +234,7 @@ data AjaxResult = AjaxResult { arStatus :: Int
                              } deriving (Eq, Show, Typeable)
 
 instance Default AjaxSettings where
-  def = AjaxSettings Nothing True False GET
+  def = AjaxSettings Nothing True False DefaultFromType_
 
 instance ToJSRef AjaxSettings where
   toJSRef (AjaxSettings mct cache ifMod method) = do
@@ -254,33 +255,40 @@ instance ToJSString Method where
   toJSString POST   = "POST"
   toJSString PUT    = "PUT"
   toJSString DELETE = "DELETE"
+  toJSString DefaultFromType_ = error "toJSString DefaultFromType_"
 
 class ToAjax a where
+  ajaxMethod :: a -> Method
+  ajaxMethod = const POST
   ajaxType :: a -> Text
-  ajaxType _ = "text/plain"
+  ajaxType = const "text/plain"
   toAjax :: a -> Value
 
-formMimeType = "application/x-www-form-urlencoded" :: Text
+instance ToAjax () where toAjax = const Null; ajaxMethod = const GET
 instance ToAjax [Char] where toAjax = toJSON
 instance ToAjax Text where toAjax = toJSON
 -- use string-conversions to allow any sort of pairs?
+formMimeType = "application/x-www-form-urlencoded" :: Text
 instance ToAjax [(Text,Text)]
   where
-    ajaxType _ = formMimeType
+    ajaxType = const formMimeType
     toAjax = object . map (\(x, y) -> x .= y)
 instance ToAjax Value
   where
     toAjax = toJSON . toLazyText . encodeToTextBuilder
-    ajaxType _ = "text/json"
+    ajaxType = const "text/json"
 
 ajax :: ToAjax a => Text -> a -> AjaxSettings -> IO AjaxResult
 ajax url d s = do
   let (++) = T.append
       ct = fromMaybe (ajaxType d) (asContentType s)
+      m = case asMethod s of
+            DefaultFromType_ -> ajaxMethod d
+            x -> x
       o1 = object [ ("data", toAjax d)
                   , "contentType" .= (ct ++ "; charset=UTF-8")
                   , "processData" .= (ajaxType d == formMimeType)
-                  , "type" .= ("POST" :: Text)
+                  , "type" .= show m
                   ]
   o2 <- toJSRef o1
   arr <- jq_ajax (toJSString url) o2
