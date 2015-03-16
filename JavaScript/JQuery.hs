@@ -220,7 +220,7 @@ import           System.IO (fixIO)
 type EventType = Text
 type Selector  = Text
 
-data Method = GET | POST | PUT | DELETE | DefaultFromType_
+data Method = GET | POST | PUT | DELETE
   deriving (Eq, Ord, Enum, Show)
 
 data AjaxSettings = AjaxSettings { asContentType :: Maybe Text
@@ -234,28 +234,7 @@ data AjaxResult = AjaxResult { arStatus :: Int
                              } deriving (Eq, Show, Typeable)
 
 instance Default AjaxSettings where
-  def = AjaxSettings Nothing True False DefaultFromType_
-
-instance ToJSRef AjaxSettings where
-  toJSRef (AjaxSettings mct cache ifMod method) = do
-    o <- newObj
-    let (.=) :: Text -> JSRef a -> IO ()
-        p .= v = F.setProp p v o
-    "method"      .= toJSString method
-    "ifModified"  .= toJSBool ifMod
-    "cache"       .= toJSBool cache
-    case mct of
-      Just ct -> "contentType" .= toJSString ct
-      Nothing -> return ()
-    "dataType"    .= ("text" :: JSString)
-    return o
-
-instance ToJSString Method where
-  toJSString GET    = "GET"
-  toJSString POST   = "POST"
-  toJSString PUT    = "PUT"
-  toJSString DELETE = "DELETE"
-  toJSString DefaultFromType_ = error "toJSString DefaultFromType_"
+  def = AjaxSettings Nothing True False GET
 
 class ToAjax a where
   ajaxMethod :: a -> Method
@@ -282,13 +261,10 @@ ajax :: ToAjax a => Text -> a -> AjaxSettings -> IO AjaxResult
 ajax url d s = do
   let (++) = T.append
       ct = fromMaybe (ajaxType d) (asContentType s)
-      m = case asMethod s of
-            DefaultFromType_ -> ajaxMethod d
-            x -> x
       o1 = object [ ("data", toAjax d)
                   , "contentType" .= (ct ++ "; charset=UTF-8")
                   , "processData" .= (ajaxType d == formMimeType)
-                  , "type" .= show m
+                  , "type" .= show (asMethod s)
                   ]
   o2 <- toJSRef o1
   arr <- jq_ajax (toJSString url) o2
