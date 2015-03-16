@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, OverloadedStrings, DeriveGeneric, DeriveDataTypeable #-}
+{-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, OverloadedStrings, DeriveGeneric, DeriveDataTypeable, FlexibleInstances #-}
 
 {-
   JQuery bindings, loosely based on fay-jquery
@@ -12,6 +12,8 @@ module JavaScript.JQuery ( JQuery(..)
                          , AjaxSettings(..)
                          , AjaxResult(..)
                          , ajax
+                         , ToAjax
+                         , toAjax
                          , HandlerSettings(..)
                          , addClass
                          , animate
@@ -204,9 +206,13 @@ import           Control.Concurrent
 import           Control.Concurrent.MVar
 import           Control.Monad
 
+import           Data.Aeson
+import           Data.Aeson.Encode (encodeToTextBuilder)
 import           Data.Default
 import           Data.Maybe
 import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Text.Lazy.Builder (toLazyText)
 import           Data.Typeable
 
 import           System.IO (fixIO)
@@ -214,49 +220,58 @@ import           System.IO (fixIO)
 type EventType = Text
 type Selector  = Text
 
-data Method = GET | POST | PUT | DELETE deriving (Eq, Ord, Enum, Show)
+data Method = GET | POST | PUT | DELETE
+  deriving (Eq, Ord, Enum, Show)
 
-data AjaxSettings = AjaxSettings { asContentType :: Text
+data AjaxSettings = AjaxSettings { asContentType :: Maybe Text
                                  , asCache       :: Bool
                                  , asIfModified  :: Bool
                                  , asMethod      :: Method
                                  } deriving (Ord, Eq, Show, Typeable)
 
 data AjaxResult = AjaxResult { arStatus :: Int
-                             , arData   :: Maybe Text
-                             } deriving (Ord, Eq, Show, Typeable)
+                             , arData   :: Value
+                             } deriving (Eq, Show, Typeable)
 
 instance Default AjaxSettings where
-  def = AjaxSettings "application/x-www-form-urlencoded; charset=UTF-8" True False GET
+  def = AjaxSettings Nothing True False GET
 
-instance ToJSRef AjaxSettings where
-  toJSRef (AjaxSettings ct cache ifMod method) = do
-    o <- newObj
-    let (.=) :: Text -> JSRef a -> IO ()
-        p .= v = F.setProp p v o
-    "method"      .= toJSString method
-    "ifModified"  .= toJSBool ifMod
-    "cache"       .= toJSBool cache
-    "contentType" .= toJSString ct
-    "dataType"    .= ("text" :: JSString)
-    return o
+class ToAjax a where
+  ajaxMethod :: a -> Method
+  ajaxMethod = const POST
+  ajaxType :: a -> Text
+  ajaxType = const "text/plain"
+  toAjax :: a -> Value
 
-instance ToJSString Method where
-  toJSString GET    = "GET"
-  toJSString POST   = "POST"
-  toJSString PUT    = "PUT"
-  toJSString DELETE = "DELETE"
+instance ToAjax () where toAjax = const Null; ajaxMethod = const GET
+instance ToAjax [Char] where toAjax = toJSON
+instance ToAjax Text where toAjax = toJSON
+-- use string-conversions to allow any sort of pairs?
+formMimeType = "application/x-www-form-urlencoded" :: Text
+instance ToAjax [(Text,Text)]
+  where
+    ajaxType = const formMimeType
+    toAjax = object . map (\(x, y) -> x .= y)
+instance ToAjax Value
+  where
+    toAjax = toJSON . toLazyText . encodeToTextBuilder
+    ajaxType = const "text/json"
 
-ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
+ajax :: ToAjax a => Text -> a -> AjaxSettings -> IO AjaxResult
 ajax url d s = do
-  o <- newObj
-  forM_ d (\(k,v) -> F.setProp k (toJSString v) o)
-  os <- toJSRef s
-  F.setProp ("data"::Text) o os
-  arr <- jq_ajax (toJSString url) os
-  dat <- F.getProp ("data"::Text) arr
-  let d = if isNull dat then Nothing else Just (fromJSString dat)
+  let (++) = T.append
+      ct = fromMaybe (ajaxType d) (asContentType s)
+      o1 = object [ ("data", toAjax d)
+                  , "contentType" .= (ct ++ "; charset=UTF-8")
+                  , "processData" .= (ajaxType d == formMimeType)
+                  , "method" .= show (asMethod s)
+                  , "ifModified" .= asIfModified s
+                  , "cache" .= asCache s
+                  ]
+  o2 <- toJSRef o1
+  arr <- jq_ajax (toJSString url) o2
   status <- fromMaybe 0 <$> (fromJSRef =<< F.getProp ("status"::Text) arr)
+  d <- fromMaybe Null <$> (fromJSRef =<< F.getProp ("data"::Text) arr)
   return (AjaxResult status d)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
