@@ -264,7 +264,9 @@ ajax url d s = do
       o1 = object [ ("data", toAjax d)
                   , "contentType" .= (ct ++ "; charset=UTF-8")
                   , "processData" .= (ajaxType d == formMimeType)
-                  , "type" .= show (asMethod s)
+                  , "method" .= show (asMethod s)
+                  , "ifModified" .= asIfModified s
+                  , "cache" .= asCache s
                   ]
   o2 <- toJSRef o1
   arr <- jq_ajax (toJSString url) o2
