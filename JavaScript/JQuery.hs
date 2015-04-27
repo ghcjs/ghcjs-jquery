@@ -444,8 +444,8 @@ on a et hs jq = do
   cb <- if hsSynchronous hs
           then F.syncCallback1 F.AlwaysRetain True a
           else F.asyncCallback1 F.AlwaysRetain a
-  jq_on cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> F.release cb)
+  cb' <- jq_on cb et' ds hd sp sip pd jq
+  return (jq_off cb' et' ds jq >> F.release cb)
     where
       et'                   = toJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
@@ -457,8 +457,8 @@ one a et hs jq = do
       in if hsSynchronous hs
             then F.syncCallback1 F.AlwaysRetain True a
             else F.asyncCallback1 F.AlwaysRetain a
-  jq_one cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> F.release cb)
+  cb' <- jq_one cb et' ds hd sp sip pd jq
+  return (jq_off cb' et' ds jq >> F.release cb)
     where
       et'                   = toJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs

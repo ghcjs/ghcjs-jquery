@@ -129,7 +129,7 @@ foreign import javascript interruptible "jQuery.ajax($1,$2).always(function(d,ts
           -> JSRef ajaxSettings
           -> IO (JSRef ajaxResult)
 
-foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
+foreign import javascript unsafe "((function () { lr=h$jquery_makeListener($1, $5, $6, $7); $8.on($2, $3, $4,lr); return lr; })())"
   jq_on :: JSFun a                -- ^ callback
         -> JSString               -- ^ event type
         -> JSString               -- ^ descendant selector
@@ -138,9 +138,9 @@ foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5
         -> Bool                   -- ^ stopImmediatePropagation
         -> Bool                   -- ^ preventDefault
         -> JQuery
-        -> IO ()
+        -> IO (JSFun c)
 
-foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
+foreign import javascript unsafe "((function () { lr=h$jquery_makeListener($1, $5, $6, $7); $8.on($2, $3, $4,lr); return lr; })())"
   jq_one :: JSFun a                -- ^ callback
          -> JSString               -- ^ event type
          -> JSString               -- ^ descendant selector
@@ -149,7 +149,7 @@ foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $
          -> Bool                   -- ^ stopImmediatePropagation
          -> Bool                   -- ^ preventDefault
          -> JQuery
-         -> IO ()
+         -> IO (JSFun c)
 
 foreign import javascript unsafe "$4.off($2,$3,$1)"
   jq_off :: JSFun a                -- ^ callback
