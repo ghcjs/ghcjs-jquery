@@ -12,6 +12,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , AjaxSettings(..)
                          , AjaxResult(..)
                          , ajax
+                         , ajaxRaw
                          , HandlerSettings(..)
                          , addClass
                          , animate
@@ -247,10 +248,9 @@ instance ToJSString Method where
   toJSString PUT    = "PUT"
   toJSString DELETE = "DELETE"
 
-ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
-ajax url d s = do
-  o <- newObj
-  forM_ d (\(k,v) -> F.setProp k (toJSString v) o)
+
+ajaxRaw :: Text -> JSRef a -> AjaxSettings -> IO AjaxResult
+ajaxRaw url o s = do
   os <- toJSRef s
   F.setProp ("data"::Text) o os
   arr <- jq_ajax (toJSString url) os
@@ -258,6 +258,12 @@ ajax url d s = do
   let d = if isNull dat then Nothing else Just (fromJSString dat)
   status <- fromMaybe 0 <$> (fromJSRef =<< F.getProp ("status"::Text) arr)
   return (AjaxResult status d)
+
+ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
+ajax url d s = do
+  o <- newObj
+  forM_ d (\(k,v) -> F.setProp k (toJSString v) o)
+  ajaxRaw url o s
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopPropagation          :: Bool
