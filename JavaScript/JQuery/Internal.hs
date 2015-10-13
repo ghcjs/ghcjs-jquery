@@ -9,11 +9,11 @@ import GHCJS.Nullable
 import GHCJS.Types
 import JavaScript.Object (Object)
 
-newtype JQuery = JQuery JSRef
-newtype Event = Event JSRef
+newtype JQuery = JQuery JSVal
+newtype Event = Event JSVal
 
 foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSRef    -> JSRef    -> JQuery -> IO JQuery
+foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSVal    -> JSVal    -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
 foreign import javascript unsafe "$3.attr($1,$2)"        jq_setAttr           :: JSString -> JSString -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.hasClass($1)"       jq_hasClass          :: JSString             -> JQuery -> IO Bool
@@ -30,10 +30,10 @@ foreign import javascript unsafe "$1.text()"             jq_getText           ::
 foreign import javascript unsafe "$2.text($1)"           jq_setText           :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "jQuery.holdReady($1)"  jq_holdReady         :: Bool                           -> IO ()
 foreign import javascript unsafe "jQuery($1)"            jq_selectElement     :: Element                        -> IO JQuery
-foreign import javascript unsafe "jQuery($1)"            jq_selectObject      :: JSRef                          -> IO JQuery
+foreign import javascript unsafe "jQuery($1)"            jq_selectObject      :: JSVal                          -> IO JQuery
 foreign import javascript unsafe "jQuery($1)"            jq_select            :: JSString                       -> IO JQuery
 foreign import javascript unsafe "jQuery()"              jq_selectEmpty       ::                                   IO JQuery
-foreign import javascript unsafe "jQuery($1,$2)"         jq_selectWithContext :: JSString -> JSRef              -> IO JQuery
+foreign import javascript unsafe "jQuery($1,$2)"         jq_selectWithContext :: JSString -> JSVal              -> IO JQuery
 foreign import javascript unsafe "$2.css($1)"            jq_getCss            :: JSString             -> JQuery -> IO JSString
 foreign import javascript unsafe "$3.css($1,$2)"         jq_setCss            :: JSString -> JSString -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.height()"           jq_getHeight         ::                         JQuery -> IO Double
@@ -53,7 +53,7 @@ foreign import javascript unsafe "$2.scrollTop($1)"      jq_setScrollTop      ::
 foreign import javascript unsafe "$2.stop($1)"           jq_stop              :: Bool                 -> JQuery -> IO JQuery
 foreign import javascript unsafe "$1.focus()"            jq_focus             ::                         JQuery -> IO JQuery
 
-foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO JSRef -- Element
+foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO JSVal -- Element
 foreign import javascript unsafe "$1.isDefaultPrevented()"            jq_isDefaultPrevented            :: Event -> IO Bool
 foreign import javascript unsafe "$1.isImmediatePropagationStopped()" jq_isImmediatePropagationStopped :: Event -> IO Bool
 foreign import javascript unsafe "$1.isPropagationStopped()"          jq_isPropagationStopped          :: Event -> IO Bool
@@ -63,7 +63,7 @@ foreign import javascript unsafe "$1.pageY"                           jq_pageY  
 foreign import javascript unsafe "$1.preventDefault()"                jq_preventDefault                :: Event -> IO ()
 foreign import javascript unsafe "$1.stopPropagation()"               jq_stopPropagation               :: Event -> IO ()
 foreign import javascript unsafe "$1.stopImmediatePropagation()"      jq_stopImmediatePropagation      :: Event -> IO ()
-foreign import javascript unsafe "$1.target"                          jq_target                        :: Event -> IO JSRef -- Element
+foreign import javascript unsafe "$1.target"                          jq_target                        :: Event -> IO JSVal -- Element
 foreign import javascript unsafe "$1.timeStamp"                       jq_timeStamp                     :: Event -> IO Double
 foreign import javascript unsafe "$1.type"                            jq_eventType                     :: Event -> IO JSString
 foreign import javascript unsafe "$1.which"                           jq_eventWhich                    :: Event -> IO Int -- fixme might not exist?
@@ -152,14 +152,14 @@ foreign import javascript interruptible "jQuery.ajax($1,$2).always(function(d,ts
                                   }\
                                 });"
   jq_ajax :: JSString             -- ^ URL
-          -> JSRef                -- ^ Settings
+          -> JSVal                -- ^ Settings
           -> IO Object            -- ^ Response
 
 foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
   jq_on :: Callback a             -- ^ callback
         -> JSString               -- ^ event type
         -> JSString               -- ^ descendant selector
-        -> JSRef                  -- ^ data
+        -> JSVal                  -- ^ data
         -> Bool                   -- ^ stopPropagation
         -> Bool                   -- ^ stopImmediatePropagation
         -> Bool                   -- ^ preventDefault
@@ -170,7 +170,7 @@ foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $
   jq_one :: Callback a             -- ^ callback
          -> JSString               -- ^ event type
          -> JSString               -- ^ descendant selector
-         -> JSRef                  -- ^ data
+         -> JSVal                  -- ^ data
          -> Bool                   -- ^ stopPropagation
          -> Bool                   -- ^ stopImmediatePropagation
          -> Bool                   -- ^ preventDefault

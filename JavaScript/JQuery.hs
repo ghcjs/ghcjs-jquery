@@ -233,31 +233,31 @@ data AjaxResult = AjaxResult { arStatus :: Int
 instance Default AjaxSettings where
   def = AjaxSettings "application/x-www-form-urlencoded; charset=UTF-8" True False GET
 
-instance ToJSRef AjaxSettings where
-  toJSRef o = fmap jsref (ajaxSettingsToObject o)
+instance ToJSVal AjaxSettings where
+  toJSVal o = fmap jsval (ajaxSettingsToObject o)
 
 ajaxSettingsToObject :: AjaxSettings -> IO Object
 ajaxSettingsToObject (AjaxSettings ct cache ifMod method) = do
     o <- Obj.create
-    let (.=) :: JSString -> JSRef -> IO ()
+    let (.=) :: JSString -> JSVal -> IO ()
         p .= v = Obj.setProp p v o
-    "method"      .= (jsref . S.pack . show) method
+    "method"      .= (jsval . S.pack . show) method
     "ifModified"  .= toJSBool ifMod
     "cache"       .= toJSBool cache
-    "contentType" .= (jsref . textToJSString) ct
-    "dataType"    .= jsref ("text" :: JSString)
+    "contentType" .= (jsval . textToJSString) ct
+    "dataType"    .= jsval ("text" :: JSString)
     return o
 
 ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
 ajax url d s = do
   o <- Obj.create
-  forM_ d (\(k,v) -> Obj.setProp (textToJSString k) ((jsref . textToJSString) v) o)
+  forM_ d (\(k,v) -> Obj.setProp (textToJSString k) ((jsval . textToJSString) v) o)
   os <- ajaxSettingsToObject s
-  Obj.setProp ("data"::JSString) (jsref o) os
-  res <- jq_ajax (textToJSString url) (jsref os)
+  Obj.setProp ("data"::JSString) (jsval o) os
+  res <- jq_ajax (textToJSString url) (jsval os)
   dat <- Obj.getProp ("data"::JSString) res
-  md <- fromJSRef dat
-  status <- fromMaybe 0 <$> (fromJSRef =<< Obj.getProp "status" res)
+  md <- fromJSVal dat
+  status <- fromMaybe 0 <$> (fromJSVal =<< Obj.getProp "status" res)
   return (AjaxResult status md)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
@@ -265,10 +265,10 @@ data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopImmediatePropagation :: Bool
                                        , hsSynchronous              :: Bool
                                        , hsDescendantFilter         :: Maybe Selector
-                                       , hsHandlerData              :: Maybe JSRef
+                                       , hsHandlerData              :: Maybe JSVal
                                        }
 
-convertHandlerSettings :: HandlerSettings -> (Bool, Bool, Bool, JSString, JSRef)
+convertHandlerSettings :: HandlerSettings -> (Bool, Bool, Bool, JSString, JSVal)
 convertHandlerSettings (HandlerSettings pd sp sip _ ds hd) =
   (pd, sp, sip, maybe ("" :: JSString) textToJSString ds, fromMaybe jsNull hd)
 
@@ -279,7 +279,7 @@ addClass :: JSString -> JQuery -> IO JQuery
 addClass c = jq_addClass c
 
 animate :: Object -> Object -> JQuery -> IO JQuery
-animate s t = jq_animate (jsref s) (jsref t)
+animate s t = jq_animate (jsval s) (jsval t)
 
 getAttr :: JSString -> JQuery -> IO JSString
 getAttr a jq = jq_getAttr a jq
@@ -334,7 +334,7 @@ selectElement :: IsElement e => e -> IO JQuery
 selectElement e = jq_selectElement (toElement e)
 
 selectObject :: Object -> IO JQuery
-selectObject a = jq_selectObject (jsref a)
+selectObject a = jq_selectObject (jsval a)
 
 select :: JSString -> IO JQuery
 select q = jq_select q
@@ -344,7 +344,7 @@ selectEmpty = jq_selectEmpty
 
 -- :: Text -> Either JQuery Object -> IO JQuery ?
 selectWithContext :: JSString -> Object -> IO JQuery
-selectWithContext t o = jq_selectWithContext t (jsref o)
+selectWithContext t o = jq_selectWithContext t (jsval o)
 
 getCss :: JSString -> JQuery -> IO JSString
 getCss t jq = jq_getCss t jq
