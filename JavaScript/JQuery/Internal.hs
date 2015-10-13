@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, CPP, EmptyDataDecls #-}
+{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, EmptyDataDecls #-}
 
 module JavaScript.JQuery.Internal where
 
@@ -13,7 +13,6 @@ import Control.Concurrent.MVar
 newtype JQuery = JQuery JSRef
 newtype Event = Event JSRef
 
-#ifdef ghcjs_HOST_OS
 foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
 foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSRef    -> JSRef    -> JQuery -> IO JQuery
 foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
@@ -185,13 +184,3 @@ foreign import javascript unsafe "$4.off($2,$3,$1)"
          -> JSString               -- ^ descendant selector
          -> JQuery
          -> IO ()
-#else
-jq_ajax                          = error "jq_ajax: only available in JavaScript"
-
-jq_on                            = error "jq_on: only available in JavaScript"
-jq_one                           = error "jq_one: only available in JavaScript"
-jq_off                           = error "jq_off: only available in JavaScript"
-
-#include "nonghcjs.txt"
-
-#endif
