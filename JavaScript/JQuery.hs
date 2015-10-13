@@ -195,7 +195,7 @@ import           GHCJS.Foreign ( toJSBool, jsNull, jsFalse, jsTrue
                                )
 import           GHCJS.Foreign.Callback as Cb
 import           GHCJS.Types (jsref)
-import           JavaScript.Object as Obj (Object, create, getProp, setProp)
+import           JavaScript.Object.Internal as Obj (Object, create, getProp, setProp)
 import           JavaScript.Cast as J (cast)
 import           GHCJS.Types
 import           GHCJS.DOM.Types (Element(..), IsElement(..), toElement
@@ -209,7 +209,7 @@ import           Control.Concurrent
 import           Control.Concurrent.MVar
 import           Control.Monad
 
-import           Unsafe.Coerce (unsafeCoerce)
+import           Data.Coerce
 import           Data.Default
 import           Data.Maybe
 import           Data.JSString as S (pack, unpack)
@@ -219,8 +219,6 @@ import           Data.Typeable
 
 import           System.IO (fixIO)
 
-import Data.Coerce
-import Unsafe.Coerce
 
 default (JSString)
 
@@ -254,7 +252,7 @@ ajaxSettingsToObject (AjaxSettings ct cache ifMod method) = do
     "method"      .= (jsref . S.pack . show) method
     "ifModified"  .= toJSBool ifMod
     "cache"       .= toJSBool cache
-    "contentType" .= (jsref . S.pack . Text.unpack) ct
+    "contentType" .= (jsref . textToJSString) ct
     "dataType"    .= jsref ("text" :: JSString)
     return o
 
@@ -264,11 +262,10 @@ ajax url d s = do
   forM_ d (\(k,v) -> Obj.setProp (textToJSString k) ((jsref . textToJSString) v) o)
   os <- ajaxSettingsToObject s
   Obj.setProp ("data"::JSString) (jsref o) os
-  arrjs <- jq_ajax (textToJSString url) (jsref os)
-  let Just arr = unsafeCoerce arrjs
-  dat <- Obj.getProp ("data"::JSString) arr
+  res <- jq_ajax (textToJSString url) (jsref os)
+  dat <- Obj.getProp ("data"::JSString) res
   let d = textFromJSRef dat -- if isNull dat then Nothing else Just (S.unpack dat)
-  status <- fromMaybe 0 <$> (fromJSRef =<< Obj.getProp "status" arr)
+  status <- fromMaybe 0 <$> (fromJSRef =<< Obj.getProp "status" res)
   return (AjaxResult status (Just d))
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool

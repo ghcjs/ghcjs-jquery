@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, EmptyDataDecls #-}
+{-# LANGUAGE ForeignFunctionInterface, JavaScriptFFI, CPP, EmptyDataDecls #-}
 
 module JavaScript.JQuery.Internal where
 
@@ -7,8 +7,7 @@ import GHCJS.Foreign
 import GHCJS.Foreign.Callback (Callback)
 import GHCJS.Nullable
 import GHCJS.Types
-
-import Control.Concurrent.MVar
+import JavaScript.Object (Object)
 
 newtype JQuery = JQuery JSRef
 newtype Event = Event JSRef
@@ -154,7 +153,7 @@ foreign import javascript interruptible "jQuery.ajax($1,$2).always(function(d,ts
                                 });"
   jq_ajax :: JSString             -- ^ URL
           -> JSRef                -- ^ Settings
-          -> IO JSRef             -- ^ Response
+          -> IO Object            -- ^ Response
 
 foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
   jq_on :: Callback a             -- ^ callback
