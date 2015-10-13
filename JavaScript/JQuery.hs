@@ -59,9 +59,12 @@ module JavaScript.JQuery ( JQuery(..)
                          , mouseenter
                          , mouseleave
                          , mousemove
+                         , mouseout
+                         , mouseover
                          , mouseup
                          , on
                          , one
+                         , trigger
                          , triggerHandler
                          , delegateTarget
                          , isDefaultPrevented
@@ -82,6 +85,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , onFocus
                          , focus
                          , onSelect
+                         , onSubmit
                          , keydown
                          , keyup
                          , keypress
@@ -188,40 +192,28 @@ module JavaScript.JQuery ( JQuery(..)
 
                          ) where
 
-import           Prelude hiding (filter, not, empty, last)
+import           Prelude hiding (filter, not, last)
 
 import           GHCJS.Marshal
-import           GHCJS.Foreign ( toJSBool, jsNull, jsFalse, jsTrue
-                               )
+import           GHCJS.Foreign (toJSBool, jsNull)
 import           GHCJS.Foreign.Callback as Cb
-import           GHCJS.Types (jsref)
 import           JavaScript.Object.Internal as Obj (Object, create, getProp, setProp)
-import           JavaScript.Cast as J (cast)
 import           GHCJS.Types
-import           GHCJS.DOM.Types (Element(..), IsElement(..), toElement
+import           GHCJS.DOM.Types (Element(..), IsElement, toElement
                                  , unElement)
-import qualified GHCJS.Foreign as F
 
 import           JavaScript.JQuery.Internal
 
-import           Control.Applicative hiding (empty)
-import           Control.Concurrent
-import           Control.Concurrent.MVar
 import           Control.Monad
 
-import           Data.Coerce
 import           Data.Default
 import           Data.Maybe
-import           Data.JSString as S (pack, unpack)
-import           Data.JSString.Text as S (textToJSString,textFromJSRef)
-import           Data.Text as Text (Text, unpack)
+import           Data.JSString as S (pack)
+import           Data.JSString.Text as S (textToJSString)
+import           Data.Text as Text (Text)
 import           Data.Typeable
 
-import           System.IO (fixIO)
-
-
 default (JSString)
-
 
 type EventType = Text
 type Selector  = Text
@@ -264,9 +256,9 @@ ajax url d s = do
   Obj.setProp ("data"::JSString) (jsref o) os
   res <- jq_ajax (textToJSString url) (jsref os)
   dat <- Obj.getProp ("data"::JSString) res
-  let d = textFromJSRef dat -- if isNull dat then Nothing else Just (S.unpack dat)
+  md <- fromJSRef dat
   status <- fromMaybe 0 <$> (fromJSRef =<< Obj.getProp "status" res)
-  return (AjaxResult status (Just d))
+  return (AjaxResult status md)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopPropagation          :: Bool
@@ -455,11 +447,9 @@ on a et hs jq = do
 
 one :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
 one a et hs jq = do
-  cb <- fixIO $ \cb ->
-      let a' = \e -> Cb.releaseCallback cb >> a e
-      in if hsSynchronous hs
-            then Cb.syncCallback1 ContinueAsync (a . Event)
-            else Cb.asyncCallback1 (a . Event)
+  cb <- if hsSynchronous hs
+          then Cb.syncCallback1 ContinueAsync (a . Event)
+          else Cb.asyncCallback1 (a . Event)
   jq_one cb et' ds hd sp sip pd jq
   return (jq_off cb et' ds jq >> Cb.releaseCallback cb)
     where
@@ -529,8 +519,8 @@ focus = jq_focus
 onSelect :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 onSelect a = on a "select"
 
-submit :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
-submit a = on a "submit"
+onSubmit :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
+onSubmit a = on a "submit"
 
 keydown :: (Event -> IO ()) -> HandlerSettings -> JQuery -> IO (IO ())
 keydown a = on a "keydown"
@@ -587,7 +577,7 @@ clone WithDataAndEvents     = jq_clone True  False
 clone DeepWithDataAndEvents = jq_clone True  True
 
 detach :: JQuery -> IO JQuery
-detach = jq_detach 
+detach = jq_detach
 
 detachSelector :: Selector -> JQuery -> IO JQuery
 detachSelector s = jq_detachSelector (textToJSString s)
