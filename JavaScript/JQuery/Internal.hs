@@ -3,55 +3,54 @@
 module JavaScript.JQuery.Internal where
 
 import GHCJS.DOM.Types (Element(..))
-import GHCJS.Foreign
 import GHCJS.Foreign.Callback (Callback)
-import GHCJS.Nullable
 import GHCJS.Types
 import JavaScript.Object (Object)
 
 newtype JQuery = JQuery JSVal
 newtype Event = Event JSVal
 
-foreign import javascript unsafe "$2.addClass($1)"       jq_addClass          :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$3.animate($1,$2)"     jq_animate           :: JSVal    -> JSVal    -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.attr($1)"           jq_getAttr           :: JSString             -> JQuery -> IO JSString
-foreign import javascript unsafe "$3.attr($1,$2)"        jq_setAttr           :: JSString -> JSString -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.hasClass($1)"       jq_hasClass          :: JSString             -> JQuery -> IO Bool
-foreign import javascript unsafe "$1.html()"             jq_getHtml           ::                         JQuery -> IO JSString
-foreign import javascript unsafe "$2.html($1)"           jq_setHtml           :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.prop($1)"           jq_getProp           :: JSString             -> JQuery -> IO JSString
-foreign import javascript unsafe "$3.prop($1,$2)"        jq_setProp           :: JSString -> JSString -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.removeAttr($1)"     jq_removeAttr        :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.removeClass($1)"    jq_removeClass       :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.removeProp($1)"     jq_removeProp        :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.val()"              jq_getVal            ::                         JQuery -> IO JSString
-foreign import javascript unsafe "$2.val($1)"            jq_setVal            :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.text()"             jq_getText           ::                         JQuery -> IO JSString
-foreign import javascript unsafe "$2.text($1)"           jq_setText           :: JSString             -> JQuery -> IO JQuery
-foreign import javascript unsafe "jQuery.holdReady($1)"  jq_holdReady         :: Bool                           -> IO ()
-foreign import javascript unsafe "jQuery($1)"            jq_selectElement     :: Element                        -> IO JQuery
-foreign import javascript unsafe "jQuery($1)"            jq_selectObject      :: JSVal                          -> IO JQuery
-foreign import javascript unsafe "jQuery($1)"            jq_select            :: JSString                       -> IO JQuery
-foreign import javascript unsafe "jQuery()"              jq_selectEmpty       ::                                   IO JQuery
-foreign import javascript unsafe "jQuery($1,$2)"         jq_selectWithContext :: JSString -> JSVal              -> IO JQuery
-foreign import javascript unsafe "$2.css($1)"            jq_getCss            :: JSString             -> JQuery -> IO JSString
-foreign import javascript unsafe "$3.css($1,$2)"         jq_setCss            :: JSString -> JSString -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.height()"           jq_getHeight         ::                         JQuery -> IO Double
-foreign import javascript unsafe "$2.height($1)"         jq_setHeight         :: Double               -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.width()"            jq_getWidth          ::                         JQuery -> IO Double
-foreign import javascript unsafe "$2.width($1)"          jq_setWidth          :: Double               -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.innerHeight()"      jq_getInnerHeight    ::                         JQuery -> IO Double
-foreign import javascript unsafe "$1.innerWidth()"       jq_getInnerWidth     ::                         JQuery -> IO Double
-foreign import javascript unsafe "$2.outerHeight($1)"    jq_getOuterHeight    :: Bool                 -> JQuery -> IO Double
-foreign import javascript unsafe "$2.outerWidth($1)"     jq_getOuterWidth     :: Bool                 -> JQuery -> IO Double
-foreign import javascript unsafe "$2.trigger($1)"        jq_trigger           :: JSString             -> JQuery -> IO ()
-foreign import javascript unsafe "$2.triggerHandler($1)" jq_triggerHandler    :: JSString             -> JQuery -> IO ()
-foreign import javascript unsafe "$1.scrollLeft()"       jq_getScrollLeft     ::                         JQuery -> IO Double
-foreign import javascript unsafe "$2.scrollLeft($1)"     jq_setScrollLeft     :: Double               -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.scrollTop()"        jq_getScrollTop      ::                         JQuery -> IO Double
-foreign import javascript unsafe "$2.scrollTop($1)"      jq_setScrollTop      :: Double               -> JQuery -> IO JQuery
-foreign import javascript unsafe "$2.stop($1)"           jq_stop              :: Bool                 -> JQuery -> IO JQuery
-foreign import javascript unsafe "$1.focus()"            jq_focus             ::                         JQuery -> IO JQuery
+foreign import javascript unsafe "jQuery(document).ready($1)"  jq_ready             ::                     Callback a -> IO ()
+foreign import javascript unsafe "$2.addClass($1)"             jq_addClass          :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$3.animate($1,$2)"           jq_animate           :: JSVal    -> JSVal    -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.attr($1)"                 jq_getAttr           :: JSString             -> JQuery -> IO JSString
+foreign import javascript unsafe "$3.attr($1,$2)"              jq_setAttr           :: JSString -> JSString -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.hasClass($1)"             jq_hasClass          :: JSString             -> JQuery -> IO Bool
+foreign import javascript unsafe "$1.html()"                   jq_getHtml           ::                         JQuery -> IO JSString
+foreign import javascript unsafe "$2.html($1)"                 jq_setHtml           :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.prop($1)"                 jq_getProp           :: JSString             -> JQuery -> IO JSString
+foreign import javascript unsafe "$3.prop($1,$2)"              jq_setProp           :: JSString -> JSString -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.removeAttr($1)"           jq_removeAttr        :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.removeClass($1)"          jq_removeClass       :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.removeProp($1)"           jq_removeProp        :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.val()"                    jq_getVal            ::                         JQuery -> IO JSString
+foreign import javascript unsafe "$2.val($1)"                  jq_setVal            :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.text()"                   jq_getText           ::                         JQuery -> IO JSString
+foreign import javascript unsafe "$2.text($1)"                 jq_setText           :: JSString             -> JQuery -> IO JQuery
+foreign import javascript unsafe "jQuery.holdReady($1)"        jq_holdReady         :: Bool                           -> IO ()
+foreign import javascript unsafe "jQuery($1)"                  jq_selectElement     :: Element                        -> IO JQuery
+foreign import javascript unsafe "jQuery($1)"                  jq_selectObject      :: JSVal                          -> IO JQuery
+foreign import javascript unsafe "jQuery($1)"                  jq_select            :: JSString                       -> IO JQuery
+foreign import javascript unsafe "jQuery()"                    jq_selectEmpty       ::                                   IO JQuery
+foreign import javascript unsafe "jQuery($1,$2)"               jq_selectWithContext :: JSString -> JSVal              -> IO JQuery
+foreign import javascript unsafe "$2.css($1)"                  jq_getCss            :: JSString             -> JQuery -> IO JSString
+foreign import javascript unsafe "$3.css($1,$2)"               jq_setCss            :: JSString -> JSString -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.height()"                 jq_getHeight         ::                         JQuery -> IO Double
+foreign import javascript unsafe "$2.height($1)"               jq_setHeight         :: Double               -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.width()"                  jq_getWidth          ::                         JQuery -> IO Double
+foreign import javascript unsafe "$2.width($1)"                jq_setWidth          :: Double               -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.innerHeight()"            jq_getInnerHeight    ::                         JQuery -> IO Double
+foreign import javascript unsafe "$1.innerWidth()"             jq_getInnerWidth     ::                         JQuery -> IO Double
+foreign import javascript unsafe "$2.outerHeight($1)"          jq_getOuterHeight    :: Bool                 -> JQuery -> IO Double
+foreign import javascript unsafe "$2.outerWidth($1)"           jq_getOuterWidth     :: Bool                 -> JQuery -> IO Double
+foreign import javascript unsafe "$2.trigger($1)"              jq_trigger           :: JSString             -> JQuery -> IO ()
+foreign import javascript unsafe "$2.triggerHandler($1)"       jq_triggerHandler    :: JSString             -> JQuery -> IO ()
+foreign import javascript unsafe "$1.scrollLeft()"             jq_getScrollLeft     ::                         JQuery -> IO Double
+foreign import javascript unsafe "$2.scrollLeft($1)"           jq_setScrollLeft     :: Double               -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.scrollTop()"              jq_getScrollTop      ::                         JQuery -> IO Double
+foreign import javascript unsafe "$2.scrollTop($1)"            jq_setScrollTop      :: Double               -> JQuery -> IO JQuery
+foreign import javascript unsafe "$2.stop($1)"                 jq_stop              :: Bool                 -> JQuery -> IO JQuery
+foreign import javascript unsafe "$1.focus()"                  jq_focus             ::                         JQuery -> IO JQuery
 
 foreign import javascript unsafe "jQuery($1.delegateTarget)"          jq_delegateTarget                :: Event -> IO JSVal -- Element
 foreign import javascript unsafe "$1.isDefaultPrevented()"            jq_isDefaultPrevented            :: Event -> IO Bool
