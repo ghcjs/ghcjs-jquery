@@ -1,1 +1,4 @@
 /dist/
+example/Main.js*
+.stack-work
+all.js

@@ -14,6 +14,7 @@ module JavaScript.JQuery ( JQuery(..)
                          , AjaxResult(..)
                          , ajax
                          , HandlerSettings(..)
+                         , ready
                          , addClass
                          , animate
                          , getAttr
@@ -274,6 +275,11 @@ convertHandlerSettings (HandlerSettings pd sp sip _ ds hd) =
 
 instance Default HandlerSettings where
   def = HandlerSettings False False False True Nothing Nothing
+
+ready :: IO () -> IO ()
+ready action = do
+  clbk <- asyncCallback (const () <$> action)
+  jq_ready clbk
 
 addClass :: JSString -> JQuery -> IO JQuery
 addClass c = jq_addClass c
