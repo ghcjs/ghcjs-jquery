@@ -278,7 +278,7 @@ instance Default HandlerSettings where
 
 ready :: IO () -> IO ()
 ready action = do
-  clbk <- asyncCallback (const () <$> action)
+  clbk <- asyncCallback action
   jq_ready clbk
 
 addClass :: JSString -> JQuery -> IO JQuery
