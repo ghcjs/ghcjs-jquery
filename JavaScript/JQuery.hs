@@ -213,6 +213,7 @@ import           Data.JSString as S (pack)
 import           Data.JSString.Text as S (textToJSString)
 import           Data.Text as Text (Text)
 import           Data.Typeable
+import           System.IO (fixIO)
 
 default (JSString)
 
@@ -445,19 +446,21 @@ on a et hs jq = do
   cb <- if hsSynchronous hs
           then Cb.syncCallback1 ContinueAsync (a . Event)
           else Cb.asyncCallback1 (a . Event)
-  jq_on cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> Cb.releaseCallback cb)
+  cb' <- jq_on cb et' ds hd sp sip pd jq
+  return (jq_off cb' et' ds jq >> Cb.releaseCallback cb)
     where
       et'                   = textToJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
 
 one :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
 one a et hs jq = do
-  cb <- if hsSynchronous hs
-          then Cb.syncCallback1 ContinueAsync (a . Event)
-          else Cb.asyncCallback1 (a . Event)
-  jq_one cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> Cb.releaseCallback cb)
+  cb <- fixIO $ \cb ->
+      let a' = \e -> Cb.releaseCallback cb >> a e
+      in if hsSynchronous hs
+            then Cb.syncCallback1 ContinueAsync (a' . Event)
+            else Cb.asyncCallback1  (a' . Event)
+  cb' <- jq_one cb et' ds hd sp sip pd jq
+  return (jq_off cb' et' ds jq >> Cb.releaseCallback cb)
     where
       et'                   = textToJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
