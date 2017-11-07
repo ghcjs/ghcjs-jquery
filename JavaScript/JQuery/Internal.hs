@@ -163,7 +163,7 @@ foreign import javascript unsafe "$8.on($2, $3, $4, h$jquery_makeListener($1, $5
         -> Bool                   -- ^ stopImmediatePropagation
         -> Bool                   -- ^ preventDefault
         -> JQuery
-        -> IO (JSFun c)
+        -> IO (Callback a)
 
 foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $5, $6, $7))"
   jq_one :: Callback a             -- ^ callback
@@ -174,7 +174,7 @@ foreign import javascript unsafe "$8.one($2, $3, $4, h$jquery_makeListener($1, $
          -> Bool                   -- ^ stopImmediatePropagation
          -> Bool                   -- ^ preventDefault
          -> JQuery
-         -> IO (JSFun c)
+         -> IO (Callback a)
 
 foreign import javascript unsafe "$4.off($2,$3,$1)"
   jq_off :: Callback a             -- ^ callback

@@ -13,7 +13,6 @@ module JavaScript.JQuery ( JQuery(..)
                          , AjaxSettings(..)
                          , AjaxResult(..)
                          , ajax
-                         , ajaxRaw
                          , HandlerSettings(..)
                          , ready
                          , addClass
@@ -214,6 +213,7 @@ import           Data.JSString as S (pack)
 import           Data.JSString.Text as S (textToJSString)
 import           Data.Text as Text (Text)
 import           Data.Typeable
+import           System.IO (fixIO)
 
 default (JSString)
 
@@ -250,27 +250,17 @@ ajaxSettingsToObject (AjaxSettings ct cache ifMod method) = do
     "dataType"    .= jsval ("text" :: JSString)
     return o
 
-instance ToJSString Method where
-  toJSString GET    = "GET"
-  toJSString POST   = "POST"
-  toJSString PUT    = "PUT"
-  toJSString DELETE = "DELETE"
-
-ajaxRaw :: Text -> JSRef a -> AjaxSettings -> IO AjaxResult
-ajaxRaw url o s = do
-  os <- toJSRef s
-  F.setProp ("data"::Text) o os
-  arr <- jq_ajax (toJSString url) os
-  dat <- F.getProp ("data"::Text) arr
-  let d = if isNull dat then Nothing else Just (fromJSString dat)
-  status <- fromMaybe 0 <$> (fromJSRef =<< F.getProp ("status"::Text) arr)
-  return (AjaxResult status d)
-
 ajax :: Text -> [(Text,Text)] -> AjaxSettings -> IO AjaxResult
 ajax url d s = do
-  o <- newObj
-  forM_ d (\(k,v) -> F.setProp k (toJSString v) o)
-  ajaxRaw url o s
+  o <- Obj.create
+  forM_ d (\(k,v) -> Obj.setProp (textToJSString k) ((jsval . textToJSString) v) o)
+  os <- ajaxSettingsToObject s
+  Obj.setProp ("data"::JSString) (jsval o) os
+  res <- jq_ajax (textToJSString url) (jsval os)
+  dat <- Obj.getProp ("data"::JSString) res
+  md <- fromJSVal dat
+  status <- fromMaybe 0 <$> (fromJSVal =<< Obj.getProp "status" res)
+  return (AjaxResult status md)
 
 data HandlerSettings = HandlerSettings { hsPreventDefault           :: Bool
                                        , hsStopPropagation          :: Bool
@@ -454,38 +444,23 @@ mouseup a = on a "mouseup"
 on :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
 on a et hs jq = do
   cb <- if hsSynchronous hs
-<<<<<<< HEAD
-          then F.syncCallback1 F.AlwaysRetain True a
-          else F.asyncCallback1 F.AlwaysRetain a
-  cb' <- jq_on cb et' ds hd sp sip pd jq
-  return (jq_off cb' et' ds jq >> F.release cb)
-=======
           then Cb.syncCallback1 ContinueAsync (a . Event)
           else Cb.asyncCallback1 (a . Event)
-  jq_on cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> Cb.releaseCallback cb)
->>>>>>> 6e8023229342eaf78204cde3189865be891e5aa4
+  cb' <- jq_on cb et' ds hd sp sip pd jq
+  return (jq_off cb' et' ds jq >> Cb.releaseCallback cb)
     where
       et'                   = textToJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
 
 one :: (Event -> IO ()) -> EventType -> HandlerSettings -> JQuery -> IO (IO ())
 one a et hs jq = do
-<<<<<<< HEAD
   cb <- fixIO $ \cb ->
-      let a' = \e -> F.release cb >> a e
+      let a' = \e -> Cb.releaseCallback cb >> a e
       in if hsSynchronous hs
-            then F.syncCallback1 F.AlwaysRetain True a
-            else F.asyncCallback1 F.AlwaysRetain a
+            then Cb.syncCallback1 ContinueAsync (a' . Event)
+            else Cb.asyncCallback1  (a' . Event)
   cb' <- jq_one cb et' ds hd sp sip pd jq
-  return (jq_off cb' et' ds jq >> F.release cb)
-=======
-  cb <- if hsSynchronous hs
-          then Cb.syncCallback1 ContinueAsync (a . Event)
-          else Cb.asyncCallback1 (a . Event)
-  jq_one cb et' ds hd sp sip pd jq
-  return (jq_off cb et' ds jq >> Cb.releaseCallback cb)
->>>>>>> 6e8023229342eaf78204cde3189865be891e5aa4
+  return (jq_off cb' et' ds jq >> Cb.releaseCallback cb)
     where
       et'                   = textToJSString et
       (pd, sp, sip, ds, hd) = convertHandlerSettings hs
